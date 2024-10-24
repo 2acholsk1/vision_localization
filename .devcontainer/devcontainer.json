@@ -1,0 +1,36 @@
+{
+    "name": "vision_localization",
+    "privileged": true,
+    "remoteUser": "zacholski",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "workspaceFolder": "/home/vision_localization_ws",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/home/vision_localization_ws/,type=bind",
+    "customizations": {
+        "vscode": {
+            "extensions":[
+                "ms-python.python",
+                "ms-vscode.makefile-tools",
+                "ms-azuretools.vscode-docker",
+                "ms-vscode.cpptools",
+                "ms-vscode.cmake-tools",
+                "mhutchie.git-graph",
+                "ms-python.vscode-pylance",
+                "njpwerner.autodocstring"   
+            ]
+        }
+    },
+    "containerEnv": {
+        "DISPLAY": "unix:0"
+    },
+    "runArgs": [
+        "--net=host",
+        "-e", "DISPLAY=${env:DISPLAY}",
+        "--name=vision_localization"
+    ],
+    "mounts": [
+        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
+        "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
+    ]
+}
