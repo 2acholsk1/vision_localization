@@ -1,0 +1,14 @@
+# .pylintrc
+[MASTER]
+ignore=tests
+
+[MESSAGES CONTROL]
+disable=
+    C0111,  # Missing docstring
+    C0116,  # Missing function or method docstring
+    E0401,   # Unable to import
+    W0621,   # Refefining names
+    R1736   # Unnecesasary list lookup
+
+[FORMAT]
+max-line-length=120
