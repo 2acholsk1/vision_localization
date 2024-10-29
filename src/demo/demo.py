@@ -5,7 +5,8 @@ import numpy as np
 import skimage.feature
 from numpy.random import random
 
-map_picture = cv.imread('data/demo/gis.png')
+map_picture = cv.imread('data/demo/earth_pro_poznan.jpg')
+print(type(map_picture))
 # template = cv.imread('template_3.jpg')
 
 
@@ -49,15 +50,15 @@ def initialize_particles(particle_number, patch_size):
     return np.asarray(particle_init)
 
 
-def initialize_particles_at_loc(particle_number, loc):
-    # height, width, _ = map.shape
-    particle_init_x = np.random_randint(loc[1] - 100, loc[1] + 100, size=particle_number)
-    particle_init_y = np.random_randint(loc[0] - 100, loc[0] + 100, size=particle_number)
+# def initialize_particles_at_loc(particle_number, loc):
+#     # height, width, _ = map.shape
+#     particle_init_x = np.random_randint(loc[1] - 100, loc[1] + 100, size=particle_number)
+#     particle_init_y = np.random_randint(loc[0] - 100, loc[0] + 100, size=particle_number)
 
-    particle_init = []
-    for i in range(particle_number):
-        particle_init.append([particle_init_x[i], particle_init_y[i]])
-    return np.asarray(particle_init)
+#     particle_init = []
+#     for i in range(particle_number):
+#         particle_init.append([particle_init_x[i], particle_init_y[i]])
+#     return np.asarray(particle_init)
 
 
 def collect_particle_desriptors(map_picture, coordinate_list, patch_size):
@@ -161,7 +162,7 @@ def match_patches(candidate, template):
 
 UAV_LOC = 0
 PARTICLE_NUMBER = 100
-TEMPLATE_SIZE = 31
+TEMPLATE_SIZE = 51
 
 trajectory = generate_uav_trajectory(500, TEMPLATE_SIZE)
 particle_coordinates = initialize_particles(PARTICLE_NUMBER, TEMPLATE_SIZE)
@@ -175,7 +176,7 @@ while True:
     point = trajectory[UAV_LOC]
     for i in range(PARTICLE_NUMBER):
         cv.circle(map_canvas, particle_coordinates[i], 2, (0, 255, 255), 2)
-        cv.circle(map_canvas, particle_coordinates[i], 4, (0, 0, 0), 2)
+        # cv.circle(map_canvas, particle_coordinates[i], 4, (0, 0, 0), 2)
     cv.circle(map_canvas, point - move_model, 10, (255, 255, 0), 5)
     cv.resizeWindow("image", int(map_picture.shape[1] / 1.5), int(map_picture.shape[0] / 1.5))
     cv.imshow('image', map_canvas)
