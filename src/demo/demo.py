@@ -160,7 +160,7 @@ def match_patches(candidate, template):
 # check the order of operations in the PF for correctness
 
 UAV_LOC = 0
-PARTICLE_NUMBER = 100
+PARTICLE_NUMBER = 500
 TEMPLATE_SIZE = 51
 
 trajectory = generate_uav_trajectory(500, TEMPLATE_SIZE)
@@ -175,7 +175,7 @@ while True:
     point = trajectory[UAV_LOC]
     for i in range(PARTICLE_NUMBER):
         cv.circle(map_canvas, particle_coordinates[i], 2, (0, 255, 255), 2)
-        # cv.circle(map_canvas, particle_coordinates[i], 4, (0, 0, 0), 2)
+        cv.circle(map_canvas, particle_coordinates[i], 4, (0, 0, 0), 2)
     cv.circle(map_canvas, point - move_model, 10, (255, 255, 0), 5)
     cv.resizeWindow("image", int(map_picture.shape[1] / 1.5), int(map_picture.shape[0] / 1.5))
     cv.imshow('image', map_canvas)
