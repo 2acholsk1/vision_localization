@@ -6,7 +6,6 @@ import skimage.feature
 from numpy.random import random
 
 map_picture = cv.imread('data/demo/earth_pro_poznan.jpg')
-print(type(map_picture))
 # template = cv.imread('template_3.jpg')
 
 
