@@ -188,7 +188,7 @@ while True:
     results = match_particles_against_template(particle_descriptors, template)
     indices_after_resampling = systematic_resample(results)
     move_model = trajectory[UAV_LOC] - trajectory[UAV_LOC - 1]
-    print(move_model)
+    # print(move_model)
     particle_coordinates = move_particles(
         indices_after_resampling,
         particle_coordinates,
