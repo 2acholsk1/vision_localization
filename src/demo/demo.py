@@ -86,7 +86,7 @@ def match_particles_against_template(particle_descriptors, template):
         # return cv2.matchTemplate(particle, template, cv2.TM_CCOEFF_NORMED)
         return match_patches(particle, template)
 
-    with ThreadPoolExecutor(max_workers=40) as executor:
+    with ThreadPoolExecutor(max_workers=2) as executor:
         # Use map to execute match_single_particle in parallel
         scores = list(executor.map(match_single_particle, particle_descriptors))
 
@@ -160,7 +160,7 @@ def match_patches(candidate, template):
 # check the order of operations in the PF for correctness
 
 UAV_LOC = 0
-PARTICLE_NUMBER = 500
+PARTICLE_NUMBER = 100
 TEMPLATE_SIZE = 51
 
 trajectory = generate_uav_trajectory(500, TEMPLATE_SIZE)
@@ -188,7 +188,7 @@ while True:
     results = match_particles_against_template(particle_descriptors, template)
     indices_after_resampling = systematic_resample(results)
     move_model = trajectory[UAV_LOC] - trajectory[UAV_LOC - 1]
-    # print(move_model)
+    print(particle_coordinates.shape)
     particle_coordinates = move_particles(
         indices_after_resampling,
         particle_coordinates,
