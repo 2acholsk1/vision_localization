@@ -15,17 +15,23 @@ class Particle:
             self.height - int(self.patch_size / 2) - 1,
             )
 
-        self.descriptor = None
+        self.patch = None
         self.weight = None
+        self.x_new = None
+        self.y_new = None
 
-    def descriptor_collect(self, map_pic):
-        self.descriptor = map_pic[
+    def set_patch(self):
+        self.patch = self.map_pic[
             self.y - int(self.patch_size / 2):self.y + int(self.patch_size / 2) + 1,
             self.x - int(self.patch_size / 2):self.x + int(self.patch_size / 2) + 1
             ]
 
+    def xy_new_swap(self):
+        self.x = self.x_new
+        self.y = self.y_new
+
     def move(self, rand_val_move, uav_move):
-        rand_movement = np.random.randint(-rand_val_move, rand_val_move, 1)
+        rand_movement = np.random.randint(-rand_val_move, rand_val_move, size=uav_move.shape)
         total_move = rand_movement + uav_move
         self.x += total_move[0]
         self.y += total_move[1]
@@ -33,6 +39,9 @@ class Particle:
                          self.width - int(self.patch_size / 2) - 1)
         self.y = np.clip(self.y, 0 + int(self.patch_size / 2) + 1,
                          self.height - int(self.patch_size / 2) - 1)
-        # for i in range(len(particles)):
-        #     particles[i].x = particles[indexes[i]].x
-        #     particles[i].y = particles[indexes[i]].y
+
+    def get_position(self):
+        return [self.x, self.y]
+
+    def get_patch(self):
+        return self.patch

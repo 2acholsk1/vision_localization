@@ -1,6 +1,6 @@
 import numpy as np
 
-from logger import log
+from src.logger import log
 
 
 class UAV:
@@ -20,12 +20,17 @@ class UAV:
 
         self.sequence_length = None
         self.localization: np.array = None
-        self.traj_coords = np.array([])
+        self.traj_coords = []
         self.step = 0
 
         self.patch = None
-
-        log.info(f'UAV start-> (0,{self.start_point}) and end-> ({self.width},{self.end_point}) points localization')
+        self.move_diff = None
+        log.info(
+            "UAV start-> (0,%d) and end-> (%d,%d) points localization",
+            self.start_point,
+            self.width,
+            self.end_point
+            )
 
     def generate_trajectory(self, sequence_length):
         self.sequence_length = sequence_length
@@ -41,12 +46,13 @@ class UAV:
             )
 
         for i in range(self.sequence_length):
-            self.traj_coords = np.append(
+            self.traj_coords.append(
                     (
                         int(coord_widths[i]),
-                        int(coord_heights[i]),
+                        int(coord_heights[i])
                     )
                 )
+        self.localization = self.traj_coords[0]
 
     def set_patch(self):
         self.patch = self.map_pic[
@@ -57,3 +63,10 @@ class UAV:
     def move(self):
         self.step += 1
         self.localization = self.traj_coords[self.step]
+        self.move_diff = np.array(self.traj_coords[self.step]) - np.array(self.traj_coords[self.step-1])
+
+    def get_position(self):
+        return self.localization
+
+    def get_patch(self):
+        return self.patch
