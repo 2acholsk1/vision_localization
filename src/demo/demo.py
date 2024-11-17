@@ -86,7 +86,7 @@ def match_particles_against_template(particle_descriptors, template):
         # return cv2.matchTemplate(particle, template, cv2.TM_CCOEFF_NORMED)
         return match_patches(particle, template)
 
-    with ThreadPoolExecutor(max_workers=40) as executor:
+    with ThreadPoolExecutor(max_workers=2) as executor:
         # Use map to execute match_single_particle in parallel
         scores = list(executor.map(match_single_particle, particle_descriptors))
 
@@ -175,7 +175,7 @@ while True:
     point = trajectory[UAV_LOC]
     for i in range(PARTICLE_NUMBER):
         cv.circle(map_canvas, particle_coordinates[i], 2, (0, 255, 255), 2)
-        # cv.circle(map_canvas, particle_coordinates[i], 4, (0, 0, 0), 2)
+        cv.circle(map_canvas, particle_coordinates[i], 4, (0, 0, 0), 2)
     cv.circle(map_canvas, point - move_model, 10, (255, 255, 0), 5)
     cv.resizeWindow("image", int(map_picture.shape[1] / 1.5), int(map_picture.shape[0] / 1.5))
     cv.imshow('image', map_canvas)
@@ -188,7 +188,6 @@ while True:
     results = match_particles_against_template(particle_descriptors, template)
     indices_after_resampling = systematic_resample(results)
     move_model = trajectory[UAV_LOC] - trajectory[UAV_LOC - 1]
-    print(move_model)
     particle_coordinates = move_particles(
         indices_after_resampling,
         particle_coordinates,

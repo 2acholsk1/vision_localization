@@ -8,7 +8,8 @@ disable=
     C0116,  # Missing function or method docstring
     E0401,   # Unable to import
     W0621,   # Refefining names
-    R1736   # Unnecesasary list lookup
+    R1736,   # Unnecesasary list lookup
+    R0902,  # Too many instance attributes
 
 [FORMAT]
 max-line-length=120
