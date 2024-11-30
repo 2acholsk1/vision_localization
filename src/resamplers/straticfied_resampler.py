@@ -5,6 +5,13 @@ from src.resamplers.resampler import Resampler
 
 
 class StratifiedResampler(Resampler):
+    """Similar to systematic resampling, but it divides the unit interval
+    into equal segments and ensures each segment selects a particle.
+    This method reduces variance compared to basic systematic resampling, especially when weights are uneven.
+
+    Args:
+        Resampler (ABC): Abstract class
+    """
     def __init__(self, number):
         self.number = number
 

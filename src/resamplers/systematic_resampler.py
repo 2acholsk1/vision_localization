@@ -5,6 +5,13 @@ from src.resamplers.resampler import Resampler
 
 
 class SystematicResampler(Resampler):
+    """An adaptation of systematic resampling, where the particle positions are selected deterministically,
+    but with some adjustments to improve accuracy or efficiency.
+    It usually involves adding randomness or changes to the interval division in systematic resampling.
+
+    Args:
+        Resampler (ABC): Abstract class
+    """
     def __init__(self, number):
         self.number = number
 

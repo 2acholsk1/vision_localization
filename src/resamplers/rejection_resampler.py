@@ -5,6 +5,13 @@ from src.resamplers.resampler import Resampler
 
 
 class RejectionResampler(Resampler):
+    """A probabilistic resampling method where particles are chosen based on their weights,
+    but a rejection criterion (such as a threshold) is applied.
+    If a particle does not meet the threshold, it is discarded, and only the accepted particles are resampled.
+
+    Args:
+        Resampler (ABC): Abstract class
+    """
     def __init__(self, number, rejection_treshold):
         self.number = number
         self.rejection_threshold = rejection_treshold

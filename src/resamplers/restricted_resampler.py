@@ -5,6 +5,13 @@ from src.resamplers.resampler import Resampler
 
 
 class RestrictedResampler(Resampler):
+    """A variation of resampling where only a subset of particles are resampled,
+    while others are kept unchanged. This method allows you to impose limits on
+    how many particles can be replaced to maintain some diversity in the population.
+
+    Args:
+        Resampler (ABC): Abstract class
+    """
     def __init__(self, number, max_resample=0.25):
         self.number = number
         self.max_resample = max_resample

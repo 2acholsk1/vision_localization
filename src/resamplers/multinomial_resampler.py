@@ -5,6 +5,13 @@ from src.resamplers.resampler import Resampler
 
 
 class MultinomialResampler(Resampler):
+    """A resampling technique where particles are chosen based on their weights,
+    with each particle having a probability proportional to its weight.
+    Some particles can be selected multiple times, while others may not be selected at all.
+
+    Args:
+        Resampler (ABC): Abstract class
+    """
     def __init__(self, number):
         self.number = number
 

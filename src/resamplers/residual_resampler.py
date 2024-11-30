@@ -5,6 +5,13 @@ from src.resamplers.resampler import Resampler
 
 
 class ResidualResampler(Resampler):
+    """A method that combines elements of stratified and multinomial resampling.
+    It first selects particles deterministically based on the integer part of their weights,
+    then uses multinomial resampling for the residual fractional part of the weights.
+
+    Args:
+        Resampler (ABC): Abstract class
+    """
     def __init__(self, number):
         self.number = number
 
