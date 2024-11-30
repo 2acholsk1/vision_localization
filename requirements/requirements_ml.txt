@@ -1,0 +1,4 @@
+pytorch-metric-learning
+faiss-gpu
+torchvision
+faiss-cpu

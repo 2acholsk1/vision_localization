@@ -1,5 +1,5 @@
-black
-flake8
-pylint
-pytest
-pre-commit
+black==24.10.0
+flake8==7.1.1
+pylint==3.3.1
+pytest==8.3.3
+pre-commit==4.0.1
