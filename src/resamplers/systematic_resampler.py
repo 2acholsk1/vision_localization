@@ -1,9 +1,10 @@
 import numpy as np
 
 from src.particle import Particle
+from src.resamplers.resampler import Resampler
 
 
-class SystematicResampler:
+class SystematicResampler(Resampler):
     def __init__(self, number):
         self.number = number
 
