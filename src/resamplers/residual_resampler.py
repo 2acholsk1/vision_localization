@@ -17,7 +17,6 @@ class ResidualResampler(Resampler):
 
     def resampling(self, particles: list[Particle]):
         weights = np.array([p.weight for p in particles])
-        weights /= np.sum(weights)
 
         integer_part = np.floor(weights * self.number).astype(int)
         remaining_particles = self.number - np.sum(integer_part)

@@ -6,7 +6,7 @@ import numpy as np
 from src import config
 from src.matchers.lbp_matcher import MatcherLBP
 from src.particle import Particle
-from src.resamplers.systematic_resampler import SystematicResampler
+from src.resamplers.restricted_resampler import RestrictedResampler
 from src.uav import UAV
 
 
@@ -30,7 +30,7 @@ def main():
     particles = np.array([Particle(map_picture, config.PATCH_SIZE) for _ in range(config.NUMBER_OF_PARTICLES)])
 
     matcher = MatcherLBP()
-    resampler = SystematicResampler(config.NUMBER_OF_PARTICLES)
+    resampler = RestrictedResampler(config.NUMBER_OF_PARTICLES)
 
     cv2.namedWindow("Visual Localization", cv2.WINDOW_NORMAL)
     cv2.resizeWindow("Visual Localization", int(map_picture.shape[1]), int(map_picture.shape[0]))

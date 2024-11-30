@@ -18,10 +18,8 @@ class RejectionResampler(Resampler):
 
     def resampling(self, particles: list[Particle]):
         weights = np.array([p.weight for p in particles])
-        weights /= np.sum(weights)
 
         new_indexes = []
-
         for _ in range(self.number):
             random_choice = np.random.rand()
             chosen_index = np.random.choice(len(particles), p=weights)

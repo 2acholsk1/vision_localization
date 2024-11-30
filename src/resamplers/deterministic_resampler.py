@@ -17,7 +17,6 @@ class DeterministicResampler(Resampler):
 
     def resampling(self, particles: list[Particle]):
         weights = np.array([p.weight for p in particles])
-        weights /= np.sum(weights)
 
         sorted_indexes = np.argsort(weights)[::-1]
         return sorted_indexes[:self.number]

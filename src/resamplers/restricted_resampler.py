@@ -18,7 +18,6 @@ class RestrictedResampler(Resampler):
 
     def resampling(self, particles: list[Particle]):
         weights = np.array([p.weight for p in particles])
-        weights /= np.sum(weights)
         max_resample_count = int(self.number * self.max_resample)
         resample_indexes = np.random.choice(len(particles), size=max_resample_count, p=weights)
         remaining_indexes = [i for i in range(len(particles)) if i not in resample_indexes]
