@@ -19,9 +19,10 @@ def train_one_epoch(model, loss_func, mining_func, device, train_loader, optimiz
     return total_loss / len(train_loader)
 
 
-def train(model, train_loader, loss_func, mining_func, optimizer, device, num_epochs, logger):
+def train(model, train_loader, loss_func, mining_func, optimizer, device, num_epochs, logger, neptune_run):
     for epoch in range(1, num_epochs + 1):
         avg_loss = train_one_epoch(
             model, loss_func, mining_func, device, train_loader, optimizer, logger, epoch
         )
         logger.info(f"Epoch {epoch} completed. Average Loss: {avg_loss:.4f}")
+        neptune_run["train/loss"].log(avg_loss)

@@ -11,7 +11,8 @@ disable=
     R1736,   # Unnecesasary list lookup
     R0902,  # Too many instance attributes
     R0913, # Too many arguments
-    R0917  # Too mant positional arguments
+    R0917,  # Too many positional arguments
+    R0914  # Too many local variables
 
 [FORMAT]
 max-line-length=120
