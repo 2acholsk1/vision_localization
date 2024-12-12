@@ -32,8 +32,7 @@ def test_set_patch():
     seq_len = 10
     uav.generate_trajectory(seq_len)
     uav.set_patch()
-
-    assert uav.patch.shape == (patch_size+1, patch_size+1, 3)
+    assert uav.patch.shape == (patch_size, patch_size, 3)
 
 
 def test_move():
@@ -48,6 +47,8 @@ def test_move():
     assert finished is False
     assert uav.get_position() != initial_position
 
-    for _ in range(seq_len-2):
+    for _ in range(seq_len - 1):
         finished = uav.move()
+
     assert finished is True
+
