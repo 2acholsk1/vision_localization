@@ -1,0 +1,20 @@
+# .pylintrc
+[MASTER]
+ignore=tests
+
+[MESSAGES CONTROL]
+disable=
+    C0111,  # Missing docstring
+    C0116,  # Missing function or method docstring
+    E0401,   # Unable to import
+    W0621,   # Refefining names
+    R1736,   # Unnecesasary list lookup
+    R0902,  # Too many instance attributes
+    R0913, # Too many arguments
+    R0917,  # Too many positional arguments
+    R0914,  # Too many local variables
+    E1101,  # Problem in env on conda
+    E0611  # Problem in env on conda
+
+[FORMAT]
+max-line-length=120
