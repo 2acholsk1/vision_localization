@@ -1,7 +1,6 @@
-import pytest
 import numpy as np
-from src.logger import log
 from src.uav import UAV
+
 
 def test_uav_initialization():
     map_pic = np.zeros((100, 100, 3), dtype=np.uint8)
@@ -14,6 +13,7 @@ def test_uav_initialization():
     assert 0 <= uav.start_point < uav.height
     assert 0 <= uav.end_point < uav.height
 
+
 def test_generate_trajectory():
     map_pic = np.zeros((100, 100, 3), dtype=np.uint8)
     patch_size = 5
@@ -24,6 +24,7 @@ def test_generate_trajectory():
     assert len(uav.traj_coords) == seq_len
     assert uav.localization == uav.traj_coords[0]
 
+
 def test_set_patch():
     map_pic = np.zeros((100, 100, 3), dtype=np.uint8)
     patch_size = 5
@@ -33,6 +34,7 @@ def test_set_patch():
     uav.set_patch()
 
     assert uav.patch.shape == (patch_size+1, patch_size+1, 3)
+
 
 def test_move():
     map_pic = np.zeros((100, 100, 3), dtype=np.uint8)
