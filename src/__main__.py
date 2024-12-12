@@ -6,7 +6,7 @@ import numpy as np
 from src import config
 from src.matchers.lbp_matcher import MatcherLBP
 from src.particle import Particle
-from src.resamplers.simple_resampler import SystematicResampler
+from src.resamplers.restricted_resampler import RestrictedResampler
 from src.uav import UAV
 
 
@@ -22,7 +22,7 @@ def visualization(map_picture, particles, uav):
 
 def main():
     """Main entry point of Vision Localization."""
-    # np.random.seed(42)
+    np.random.seed(42)
     map_picture = cv2.imread(config.MAP_PICTURE_PATH)
     uav = UAV(map_picture, config.PATCH_SIZE)
     uav.generate_trajectory(config.UAV_TRAJ_SEQ_LEN)
@@ -30,7 +30,7 @@ def main():
     particles = np.array([Particle(map_picture, config.PATCH_SIZE) for _ in range(config.NUMBER_OF_PARTICLES)])
 
     matcher = MatcherLBP()
-    resampler = SystematicResampler(config.NUMBER_OF_PARTICLES)
+    resampler = RestrictedResampler(config.NUMBER_OF_PARTICLES)
 
     cv2.namedWindow("Visual Localization", cv2.WINDOW_NORMAL)
     cv2.resizeWindow("Visual Localization", int(map_picture.shape[1]), int(map_picture.shape[0]))
@@ -55,11 +55,15 @@ def main():
         for i, particle in enumerate(particles):
             particles[i].x_new = particles[new_indices[i]].x
             particles[i].y_new = particles[new_indices[i]].y
-        uav.move()
+
+        end_traj = uav.move()
 
         for particle in particles:
             particle.xy_new_swap()
             particle.move(config.RAND_STATIC_MOVE, uav.move_diff)
+
+        if end_traj:
+            break
 
 
 if __name__ == "__main__":

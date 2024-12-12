@@ -61,9 +61,12 @@ class UAV:
         ]
 
     def move(self):
-        self.step += 1
-        self.localization = self.traj_coords[self.step]
-        self.move_diff = np.array(self.traj_coords[self.step]) - np.array(self.traj_coords[self.step-1])
+        if self.step < (len(self.traj_coords)-1):
+            self.step += 1
+            self.localization = self.traj_coords[self.step]
+            self.move_diff = np.array(self.traj_coords[self.step]) - np.array(self.traj_coords[self.step-1])
+            return False
+        return True
 
     def get_position(self):
         return self.localization
