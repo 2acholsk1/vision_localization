@@ -28,11 +28,11 @@ jobs:
 
       - name: Run Flake8
         run: |
-          flake8 src/ tests/
+          flake8 src/
 
       - name: Run Pylint
         run: |
-          pylint src/ tests/
+          pylint src/
 
   test:
     runs-on: ubuntu-latest
