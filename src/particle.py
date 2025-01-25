@@ -17,6 +17,7 @@ class Particle:
 
         self.patch = None
         self.weight = None
+        self.last_weight = 0.0
         self.x_new = None
         self.y_new = None
 
