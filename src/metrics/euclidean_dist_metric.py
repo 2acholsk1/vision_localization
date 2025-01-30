@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 
 from src import config
@@ -11,6 +12,8 @@ class EuclideanDistance(Metric):
     def __init__(self):
         self.total_absolute_error = np.array([0.0, 0.0])
         self.mean_absolute_error = np.array([0.0, 0.0])
+        self.error_steps_x = np.array([])
+        self.error_steps_y = np.array([])
         self.steps = 0
 
     def compute(self, particles: list[Particle], uav: UAV):
@@ -27,8 +30,11 @@ class EuclideanDistance(Metric):
         for paricle in particles:
             error[0] += abs(uav.get_position()[0] - paricle.get_position()[0])
             error[1] += abs(uav.get_position()[1] - paricle.get_position()[1])
-            error[2] += abs(uav.get_position()[0] - mean_x)
-            error[3] += abs(uav.get_position()[1] - mean_y)
+        error[2] = abs(uav.get_position()[0] - mean_x)
+        error[3] = abs(uav.get_position()[1] - mean_y)
+
+        self.error_steps_x = np.append(self.error_steps_x, error[2])
+        self.error_steps_y = np.append(self.error_steps_y, error[3])
 
         self.total_absolute_error[0] += error[0]
         self.total_absolute_error[1] += error[1]
@@ -45,6 +51,15 @@ class EuclideanDistance(Metric):
             self.total_absolute_error[0], self.total_absolute_error[1],
             self.mean_absolute_error[0], self.mean_absolute_error[1]
         )
+        t = np.arange(0, self.steps, 1)
+        plt.plot(t, self.error_steps_x, label="X_error")
+        plt.plot(t, self.error_steps_y, label="Y_error")
+        plt.legend()
+        plt.xlabel("Step")
+        plt.ylabel("Error [px]")
+        plt.title("Diff between Real Position and Mean Particles Value")
+        plt.grid()
+        plt.show()
 
     def get_shape_params(self, particles: list[Particle]):
         maximal_x = max(particles, key=lambda obj: obj.x)

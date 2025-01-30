@@ -28,7 +28,7 @@ def visualization(map_picture, particles, uav, metric):
 
 def main():
     """Main entry point of Vision Localization."""
-    # np.random.seed(42)
+    np.random.seed(42)
     map_picture = cv2.imread(config.MAP_PICTURE_PATH)
     uav = UAV(map_picture, config.PATCH_SIZE)
     uav.generate_trajectory(config.UAV_TRAJ_SEQ_LEN)

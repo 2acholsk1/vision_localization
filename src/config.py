@@ -5,7 +5,7 @@ MAP_PICTURE_PATH = "data/demo/earth_pro_poznan.jpg"
 PATCH_SIZE = 51
 
 # UAV Trajectory
-UAV_TRAJ_SEQ_LEN = 500
+UAV_TRAJ_SEQ_LEN = 200
 
 # Particles
 NUMBER_OF_PARTICLES = 500
