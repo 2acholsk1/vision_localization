@@ -14,7 +14,8 @@ disable=
     R0917,  # Too many positional arguments
     R0914,  # Too many local variables
     E1101,  # Problem in env on conda
-    E0611  # Problem in env on conda
+    E0611,  # Problem in env on conda
+    E1120  # no-value-for-parameter
 
 [FORMAT]
 max-line-length=120
