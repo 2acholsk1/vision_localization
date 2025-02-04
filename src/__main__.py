@@ -1,19 +1,16 @@
 #!/usr/bin/env python3
 
-import os
-import shutil
-
 import cv2
 import hydra
 import numpy as np
-from omegaconf import OmegaConf
+from omegaconf import DictConfig
 
-from src.configs.config import Config
-from src.matchers.lbp_matcher import MatcherLBP
 from src.metrics.euclidean_dist_metric import EuclideanDistance
+from src.metrics.time_metric import TimeMetric
 from src.particle import Particle
-from src.resamplers.systematic_resampler import SystematicResampler
 from src.uav import UAV
+from src.utils.hydra_saving import save_results
+from src.utils.launching_utils import choose_matcher, choose_resampler
 
 
 def visualization(map_picture, particles, particles_len, uav, metric):
@@ -31,11 +28,11 @@ def visualization(map_picture, particles, particles_len, uav, metric):
     cv2.imshow('Visual Localization', map_copy)
 
 
-@hydra.main(config_name=None, version_base=None)
-def main(_):
+@hydra.main(config_path='configs', config_name='config.yaml', version_base=None)
+def main(cfg: DictConfig):
     """Main entry point of Vision Localization."""
 
-    cfg = OmegaConf.structured(Config())
+    # cfg = OmegaConf.structured(Config())
 
     np.random.seed(cfg.work_env.seed)
     map_picture = cv2.imread(cfg.work_env.picture_path)
@@ -44,18 +41,21 @@ def main(_):
 
     particles = np.array([Particle(map_picture, cfg.work_env.patch_size) for _ in range(cfg.particles.number)])
 
-    matcher = MatcherLBP()
-    resampler = SystematicResampler(cfg.particles.number)
-    metric = EuclideanDistance()
+    matcher = choose_matcher(cfg.matcher.name)
+    resampler = choose_resampler(cfg.resampler.name, cfg.particles.number)
+    euclidean_metric = EuclideanDistance()
+    time_metric = TimeMetric()
 
-    cv2.namedWindow("Visual Localization", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("Visual Localization", int(map_picture.shape[1]), int(map_picture.shape[0]))
+    if cfg.work_env.visualize:
+        cv2.namedWindow("Visual Localization", cv2.WINDOW_NORMAL)
+        cv2.resizeWindow("Visual Localization", int(map_picture.shape[1]), int(map_picture.shape[0]))
 
     while True:
-        visualization(map_picture, particles, cfg.particles.number, uav, metric)
-        while cfg.work_env.start < 5:
-            cfg.work_env.start = cv2.waitKey(10)
-        cv2.waitKey(10)
+        if cfg.work_env.visualize:
+            visualization(map_picture, particles, cfg.particles.number, uav, euclidean_metric)
+            while cfg.work_env.start < 5:
+                cfg.work_env.start = cv2.waitKey(10)
+            cv2.waitKey(10)
         uav.set_patch()
         matcher.compute_template_descriptor(uav.get_patch())
         for particle in particles:
@@ -73,7 +73,8 @@ def main(_):
             particles[i].x_new = particles[new_indices[i]].x
             particles[i].y_new = particles[new_indices[i]].y
 
-        metric.compute(particles, uav)
+        euclidean_metric.compute(particles, uav)
+        time_metric.compute()
         end_traj = uav.move()
 
         for particle in particles:
@@ -81,15 +82,11 @@ def main(_):
             particle.move(cfg.particles.rand_static_move, uav.move_diff)
 
         if end_traj:
-            metric.evaluate()
+            euclidean_metric.evaluate(cfg.metrics.ploting)
+            time_metric.evaluate()
             break
 
-    output_dir = hydra.core.hydra_config.HydraConfig.get().runtime.output_dir
-    os.makedirs(output_dir, exist_ok=True)
-
-    config_file_path = os.path.abspath("src/configs/config.py")
-
-    shutil.copy(config_file_path, os.path.join(output_dir, "config.py"))
+        save_results(euclidean_metric)
 
 
 if __name__ == "__main__":
