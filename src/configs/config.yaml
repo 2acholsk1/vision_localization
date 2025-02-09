@@ -3,22 +3,27 @@ defaults:
 
 work_env:
   seed: 42
-  visualize: False
-  picture_path: "data/demo/earth_pro_poznan.jpg"
+  visualize: True
+  picture_path: "data/NAIP/m_3608905_nw_16_1_20140728.jpg"
   patch_size: 51
   start: 0
 
 particles:
-  number: 500
+  number: 3
   rand_static_move: 20
 
 resampler:
   name: "Systematic"
 
 matcher:
-  name: "LBP"
+  name: "NN"
 uav:
   traj_len: 300
 
 metrics:
-  ploting: False
+  ploting: True
+
+model:
+  encoder_name: "resnet50"
+  embedding_size: 128
+  weights_path: "data/models/model_365.pth"

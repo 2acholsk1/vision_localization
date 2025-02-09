@@ -24,7 +24,7 @@ def visualization(map_picture, particles, particles_len, uav, metric):
                 axes=(int(major), int(minor)), angle=0, startAngle=0, endAngle=360, color=(0, 255, 0), thickness=2)
     cv2.circle(map_copy, (int(centroid[0][0]), int(centroid[0][1])), 5, (0, 0, 255), -1)
     cv2.circle(map_copy, uav.get_position(), 10, (255, 255, 0), 5)
-    cv2.resizeWindow("Visual Localization", int(map_picture.shape[1]), int(map_picture.shape[0]))
+    # cv2.resizeWindow("Visual Localization", int(map_picture.shape[1]), int(map_picture.shape[0]))
     cv2.imshow('Visual Localization', map_copy)
 
 
@@ -41,7 +41,7 @@ def main(cfg: DictConfig):
 
     particles = np.array([Particle(map_picture, cfg.work_env.patch_size) for _ in range(cfg.particles.number)])
 
-    matcher = choose_matcher(cfg.matcher.name)
+    matcher = choose_matcher(cfg.matcher.name, cfg.model.encoder_name, cfg.model.embedding_size, cfg.model.weights_path)
     resampler = choose_resampler(cfg.resampler.name, cfg.particles.number)
     euclidean_metric = EuclideanDistance()
     time_metric = TimeMetric()
@@ -57,7 +57,7 @@ def main(cfg: DictConfig):
                 cfg.work_env.start = cv2.waitKey(10)
             cv2.waitKey(10)
         uav.set_patch()
-        matcher.compute_template_descriptor(uav.get_patch())
+        matcher.compute_template(uav.get_patch())
         for particle in particles:
             particle.set_patch()
             particle.weight = matcher.match_patches(particle.get_patch())
