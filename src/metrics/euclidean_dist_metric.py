@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src import config
 from src.logger import log
 from src.metrics.metric import Metric
 from src.particle import Particle
@@ -43,7 +42,7 @@ class EuclideanDistance(Metric):
 
         self.steps += 1
 
-    def evaluate(self):
+    def evaluate(self, ploting):
         log.info(
             "MEAN EUCLIDEAN DISTANCE\n"
             "Total Absolute Error (TAE): x=%s; y=%s\n"
@@ -51,15 +50,26 @@ class EuclideanDistance(Metric):
             self.total_absolute_error[0], self.total_absolute_error[1],
             self.mean_absolute_error[0], self.mean_absolute_error[1]
         )
-        t = np.arange(0, self.steps, 1)
-        plt.plot(t, self.error_steps_x, label="X_error")
-        plt.plot(t, self.error_steps_y, label="Y_error")
-        plt.legend()
-        plt.xlabel("Step")
-        plt.ylabel("Error [px]")
-        plt.title("Diff between Real Position and Mean Particles Value")
-        plt.grid()
-        plt.show()
+        if ploting:
+            t = np.arange(0, self.steps, 1)
+            plt.plot(t, self.error_steps_x, label="X_error")
+            plt.plot(t, self.error_steps_y, label="Y_error")
+            plt.legend()
+            plt.xlabel("Step")
+            plt.ylabel("Error [px]")
+            plt.title("Diff between Real Position and Mean Particles Value")
+            plt.grid()
+            plt.show()
+
+    def save_data(self, path):
+        np.savetxt(
+            path,
+            np.column_stack((self.error_steps_x, self.error_steps_y,)),
+            delimiter=",",
+            header="error_steps_x,error_steps_y",
+            comments="",
+            fmt="%.5f"
+            )
 
     def get_shape_params(self, particles: list[Particle]):
         maximal_x = max(particles, key=lambda obj: obj.x)
@@ -69,8 +79,8 @@ class EuclideanDistance(Metric):
         mean_x = 0.0
         mean_y = 0.0
         for particle in particles:
-            mean_x += particle.get_position()[0] * particle.last_weight * config.NUMBER_OF_PARTICLES
-            mean_y += particle.get_position()[1] * particle.last_weight * config.NUMBER_OF_PARTICLES
+            mean_x += particle.get_position()[0] * particle.last_weight * len(particles)
+            mean_y += particle.get_position()[1] * particle.last_weight * len(particles)
         mean_x /= len(particles)
         mean_y /= len(particles)
 

@@ -1,7 +1,10 @@
 # pylint: skip-file
 # flake8: noqa
 # type: ignore
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+
+import hydra
+from omegaconf import MISSING
 
 
 @dataclass
@@ -18,11 +21,11 @@ class ParticlesConfig:
 
 @dataclass
 class ResamplerConfig:
-    name: str = "Systematic"
+    name: str = MISSING  # ✅ MISSING allows Hydra to override this dynamically
 
 @dataclass
 class MatcherConfig:
-    name: str = "LBP"
+    name: str = 'LBP'
 
 @dataclass
 class UAVConfig:
@@ -32,6 +35,6 @@ class UAVConfig:
 class Config:
     work_env: WorkEnvConfig = WorkEnvConfig()
     particles: ParticlesConfig = ParticlesConfig()
-    resampler: ResamplerConfig = ResamplerConfig()
+    resampler: ResamplerConfig = ResamplerConfig()  # ✅ Explicitly include resampler
     matcher: MatcherConfig = MatcherConfig()
     uav: UAVConfig = UAVConfig()

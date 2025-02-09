@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class Metric(ABC):
 
     @abstractmethod
-    def compute(self, particles, uav):
+    def compute(self):
         pass
 
     @abstractmethod

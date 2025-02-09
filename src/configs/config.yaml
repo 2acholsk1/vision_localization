@@ -1,0 +1,24 @@
+defaults:
+  - _self_
+
+work_env:
+  seed: 42
+  visualize: False
+  picture_path: "data/demo/earth_pro_poznan.jpg"
+  patch_size: 51
+  start: 0
+
+particles:
+  number: 500
+  rand_static_move: 20
+
+resampler:
+  name: "Systematic"
+
+matcher:
+  name: "LBP"
+uav:
+  traj_len: 300
+
+metrics:
+  ploting: False
