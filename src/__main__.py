@@ -154,6 +154,5 @@ def main(cfg: DictConfig):
             break
 
 
-
 if __name__ == "__main__":
     main()

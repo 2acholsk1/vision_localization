@@ -2,6 +2,7 @@ import os
 import hydra
 import matplotlib.pyplot as plt
 
+
 def save_results(metric, plot_figure=None):
     output_dir = hydra.core.hydra_config.HydraConfig.get().runtime.output_dir
     results_dir = os.path.join(output_dir, "results")
