@@ -1,8 +1,8 @@
-matplotlib==3.9.2
-numpy==2.1.2
-opencv-python-headless==4.10.0.84
-opencv-python==4.10.0.84
-scikit-image==0.24.0
+matplotlib
+numpy
+opencv-python-headless
+# opencv-python
+scikit-image
 pytorch-metric-learning
 faiss-gpu
 faiss-cpu
@@ -10,9 +10,10 @@ torchvision
 torchviz
 neptune
 torchsummary
-black==24.10.0
-flake8==7.1.1
-pylint==3.3.1
-pytest==8.3.3
-pre-commit==4.0.1
+black
+flake8
+pylint
+pytest
+pre-commit
 timm
+hydra-core

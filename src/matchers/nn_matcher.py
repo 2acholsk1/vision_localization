@@ -8,12 +8,13 @@ from src.nn.embedding import EmbeddingModel
 
 
 class NNMatcher:
-    def __init__(self, encoder_name: str, embedding_size: int, weights_path: str):
+    def __init__(self, encoder_name: str, embedding_size: int, weights_path: str, device: str = "cuda"):
         self.template_embedding = None
         self.sum_of_weight = []
+        self.device = torch.device(device if torch.cuda.is_available() else "cpu")
 
-        self.model = EmbeddingModel(encoder_name, embedding_size)
-        self.model.load_state_dict(torch.load(weights_path, map_location=torch.device("cpu")))
+        self.model = EmbeddingModel(encoder_name, embedding_size).to(self.device)
+        self.model.load_state_dict(torch.load(weights_path, map_location=self.device))
         self.model.eval()
 
         self.transform = transforms.Compose([
@@ -26,9 +27,8 @@ class NNMatcher:
         candidate_embedding = self.get_embedding(patch)
 
         distance = torch.dist(self.template_embedding, candidate_embedding, p=2).item()
-
         result = 1.0 - distance
-        result = (result + 1.0) / 2.0
+        result = 0.5 * (result + 1.0)
         self.sum_of_weight.append(result)
 
         return result
@@ -38,12 +38,20 @@ class NNMatcher:
 
     def get_sum_of_weight(self):
         sum_value = np.sum(self.sum_of_weight)
-        self.sum_of_weight = []
+        self.sum_of_weight.clear()
         return sum_value
 
     def get_embedding(self, img):
-        img = Image.fromarray(img)
-        img = self.transform(img).unsqueeze(0)
+        if isinstance(img, np.ndarray):
+            img = torch.from_numpy(img).permute(2, 0, 1).float() / 255.0
+        elif isinstance(img, Image.Image):
+            img = self.transform(img)
+        elif isinstance(img, torch.Tensor):
+            if img.dim() == 3:
+                img = img / 255.0
+
+        img = img.unsqueeze(0).to(self.device)
         with torch.no_grad():
             embedding = self.model(img)
+
         return embedding.squeeze(0)
