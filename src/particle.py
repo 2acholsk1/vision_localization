@@ -2,17 +2,25 @@ import numpy as np
 
 
 class Particle:
-    def __init__(self, map_pic, patch_size: int):
+    def __init__(self, map_pic, patch_size: int, position=None):
         self.map_pic = map_pic
         self.height, self.width, self.canals = self.map_pic.shape
         self.patch_size = patch_size
-        self.x = np.random.randint(
-            0 + int(self.patch_size / 2) + 1,
-            self.width - int(self.patch_size / 2) - 1,
+
+        if position is not None:
+            self.x, self.y = position
+            self.x = np.clip(self.x, 0 + int(self.patch_size / 2) + 1,
+                self.width - int(self.patch_size / 2) - 1,)
+            self.y = np.clip(self.y, 0 + int(self.patch_size / 2) + 1,
+                self.height - int(self.patch_size / 2) - 1,)
+        else:
+            self.x = np.random.randint(
+                0 + int(self.patch_size / 2) + 1,
+                self.width - int(self.patch_size / 2) - 1,
             )
-        self.y = np.random.randint(
-            0 + int(self.patch_size / 2) + 1,
-            self.height - int(self.patch_size / 2) - 1,
+            self.y = np.random.randint(
+                0 + int(self.patch_size / 2) + 1,
+                self.height - int(self.patch_size / 2) - 1,
             )
 
         self.patch = None
@@ -22,6 +30,8 @@ class Particle:
         self.y_new = None
 
     def set_patch(self):
+        # print(f"Partcle x {self.x}")
+        # print(f"Partcle y {self.y}")
         self.patch = self.map_pic[
             self.y - int(self.patch_size / 2):self.y + int(self.patch_size / 2) + 1,
             self.x - int(self.patch_size / 2):self.x + int(self.patch_size / 2) + 1

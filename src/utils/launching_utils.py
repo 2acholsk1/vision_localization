@@ -1,4 +1,5 @@
 from src.matchers.lbp_matcher import MatcherLBP
+from src.matchers.nn_matcher import NNMatcher
 from src.resamplers.bootstrap_resampler import BootstrapResampler
 from src.resamplers.deterministic_resampler import DeterministicResampler
 from src.resamplers.multinomial_resampler import MultinomialResampler
@@ -9,10 +10,12 @@ from src.resamplers.straticfied_resampler import StratifiedResampler
 from src.resamplers.systematic_resampler import SystematicResampler
 
 
-def choose_matcher(matcher_name):
+def choose_matcher(matcher_name, encoder_name, embedding_size, weights_path):
     match(matcher_name):
         case 'LBP':
             return MatcherLBP()
+        case 'NN':
+            return NNMatcher(encoder_name, embedding_size, weights_path)
 
 
 def choose_resampler(resampler_name, number):

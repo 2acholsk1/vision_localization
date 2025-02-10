@@ -51,15 +51,17 @@ class EuclideanDistance(Metric):
             self.mean_absolute_error[0], self.mean_absolute_error[1]
         )
         if ploting:
+            fig, ax = plt.subplots()
             t = np.arange(0, self.steps, 1)
-            plt.plot(t, self.error_steps_x, label="X_error")
-            plt.plot(t, self.error_steps_y, label="Y_error")
-            plt.legend()
-            plt.xlabel("Step")
-            plt.ylabel("Error [px]")
-            plt.title("Diff between Real Position and Mean Particles Value")
-            plt.grid()
-            plt.show()
+            ax.plot(t, self.error_steps_x, label="X_error")
+            ax.plot(t, self.error_steps_y, label="Y_error")
+            ax.legend()
+            ax.set_xlabel("Step")
+            ax.set_ylabel("Error [px]")
+            ax.set_title("Diff between Real Position and Mean Particles Value")
+            ax.grid()
+            return fig
+        return None
 
     def save_data(self, path):
         np.savetxt(
