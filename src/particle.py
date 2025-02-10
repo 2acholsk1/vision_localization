@@ -9,10 +9,14 @@ class Particle:
 
         if position is not None:
             self.x, self.y = position
-            self.x = np.clip(self.x, 0 + int(self.patch_size / 2) + 1,
-                self.width - int(self.patch_size / 2) - 1,)
-            self.y = np.clip(self.y, 0 + int(self.patch_size / 2) + 1,
-                self.height - int(self.patch_size / 2) - 1,)
+            self.x = np.clip(
+                self.x, 0 + int(self.patch_size / 2) + 1,
+                self.width - int(self.patch_size / 2) - 1
+            )
+            self.y = np.clip(
+                self.y, 0 + int(self.patch_size / 2) + 1,
+                self.height - int(self.patch_size / 2) - 1,
+            )
         else:
             self.x = np.random.randint(
                 0 + int(self.patch_size / 2) + 1,
@@ -30,8 +34,6 @@ class Particle:
         self.y_new = None
 
     def set_patch(self):
-        # print(f"Partcle x {self.x}")
-        # print(f"Partcle y {self.y}")
         self.patch = self.map_pic[
             self.y - int(self.patch_size / 2):self.y + int(self.patch_size / 2) + 1,
             self.x - int(self.patch_size / 2):self.x + int(self.patch_size / 2) + 1
