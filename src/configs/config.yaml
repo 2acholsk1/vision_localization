@@ -1,0 +1,33 @@
+defaults:
+  - _self_
+
+work_env:
+  seed: 42
+  visualize: True
+  picture_path: "data/NAIP/m_3608905_nw_16_1_20140728.jpg"
+  patch_size: 128
+  start: 0
+
+particles:
+  number: 300
+  rand_static_move: 20
+
+resampler:
+  name: "Systematic"
+
+matcher:
+  starter: "NN"
+  continous: "LBP"
+  patch_size: 512
+  overlap: 0.3
+  num_of_best_matches: 10
+uav:
+  traj_len: 300
+
+metrics:
+  ploting: True
+
+model:
+  encoder_name: "resnet50"
+  embedding_size: 128
+  weights_path: "data/models/model_365.pth"

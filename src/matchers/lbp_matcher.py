@@ -19,7 +19,7 @@ class MatcherLBP:
 
         return result
 
-    def compute_template_descriptor(self, patch):
+    def compute_template(self, patch):
         self.template_vector = self.compute_hist_descriptors(patch)
 
     def get_sum_of_weight(self):

@@ -2,21 +2,34 @@ import numpy as np
 
 
 class Particle:
-    def __init__(self, map_pic, patch_size: int):
+    def __init__(self, map_pic, patch_size: int, position=None):
         self.map_pic = map_pic
         self.height, self.width, self.canals = self.map_pic.shape
         self.patch_size = patch_size
-        self.x = np.random.randint(
-            0 + int(self.patch_size / 2) + 1,
-            self.width - int(self.patch_size / 2) - 1,
+
+        if position is not None:
+            self.x, self.y = position
+            self.x = np.clip(
+                self.x, 0 + int(self.patch_size / 2) + 1,
+                self.width - int(self.patch_size / 2) - 1
             )
-        self.y = np.random.randint(
-            0 + int(self.patch_size / 2) + 1,
-            self.height - int(self.patch_size / 2) - 1,
+            self.y = np.clip(
+                self.y, 0 + int(self.patch_size / 2) + 1,
+                self.height - int(self.patch_size / 2) - 1,
+            )
+        else:
+            self.x = np.random.randint(
+                0 + int(self.patch_size / 2) + 1,
+                self.width - int(self.patch_size / 2) - 1,
+            )
+            self.y = np.random.randint(
+                0 + int(self.patch_size / 2) + 1,
+                self.height - int(self.patch_size / 2) - 1,
             )
 
         self.patch = None
         self.weight = None
+        self.last_weight = 0.0
         self.x_new = None
         self.y_new = None
 
