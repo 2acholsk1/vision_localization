@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import heapq
+
 import cv2
 import hydra
 import numpy as np
@@ -138,7 +139,7 @@ def main(cfg: DictConfig):
 
         compute_matching(particles, uav, matcher_cont, resampler)
 
-        euclidean_metric.compute(particles, uav)
+        euclidean_metric.compute(particles, uav, cfg.work_env.scale)
         time_metric.compute()
 
         end_traj = uav.move()
