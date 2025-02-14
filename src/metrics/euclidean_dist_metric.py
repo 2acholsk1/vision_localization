@@ -57,9 +57,9 @@ class EuclideanDistance(Metric):
         if ploting:
             fig, ax = plt.subplots()
             t = np.arange(0, self.steps, 1)
-            ax.plot(t, self.error_steps_x, label="X_error")
-            ax.plot(t, self.error_steps_y, label="Y_error")
-            ax.plot(t, np.sqrt(self.error_steps_x**2 + self.error_steps_y**2), label="Total_error")
+            ax.plot(t, self.error_steps_x, label="X error")
+            ax.plot(t, self.error_steps_y, label="Y error")
+            ax.plot(t, np.sqrt(self.error_steps_x**2 + self.error_steps_y**2), label="Euclidean distance error")
             ax.legend()
             ax.set_xlabel("Step")
             ax.set_ylabel("Error [m]")

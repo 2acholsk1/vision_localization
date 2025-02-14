@@ -47,7 +47,7 @@ def visualize_particles(map_picture, particles, uav, metric):
     major, minor, centroid = metric.get_shape_params(particles)
 
     for particle in particles:
-        cv2.circle(map_copy, particle.get_position(), 2, (0, 255, 255), 2)
+        cv2.circle(map_copy, particle.get_position(), 2, (255, 0, 0), 2)
         cv2.circle(map_copy, particle.get_position(), 4, (0, 0, 0), 2)
 
     cv2.ellipse(
@@ -132,7 +132,6 @@ def main(cfg: DictConfig):
     if cfg.work_env.visualize:
         cv2.namedWindow("Visual Localization", cv2.WINDOW_NORMAL)
         cv2.resizeWindow("Visual Localization", int(map_picture.shape[1]), int(map_picture.shape[0]))
-
     while True:
         if cfg.work_env.visualize:
             visualize_particles(map_picture, particles, uav, euclidean_metric)
