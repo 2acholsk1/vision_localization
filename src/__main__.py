@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import heapq
+import time
 
 import cv2
 import hydra
@@ -46,24 +47,23 @@ def visualize_particles(map_picture, particles, uav, metric):
     map_copy = np.copy(map_picture)
     major, minor, centroid = metric.get_shape_params(particles)
 
-    traj_coords = uav.traj_coords
-    for i in range(1, len(traj_coords)):
-        cv2.line(map_copy, traj_coords[i - 1], traj_coords[i], (255, 0, 0), 2)
+    # traj_coords = uav.traj_coords
+    # for i in range(1, len(traj_coords)):
+    #     cv2.line(map_copy, traj_coords[i - 1], traj_coords[i], (255, 0, 0), 2)
 
-    # Dodanie oznaczenia startu i końca trajektorii
-    start_point = traj_coords[0]
-    end_point = traj_coords[-1]
-    text_offset = (0, -10)  # Przesunięcie tekstu w górę
-    font_scale = 1.0  # Powiększenie tekstu
+    # # Dodanie oznaczenia startu i końca trajektorii
+    # start_point = traj_coords[0]
+    # end_point = traj_coords[-1]
+    # text_offset = (0, -10)  # Przesunięcie tekstu w górę
+    # font_scale = 1.0  # Powiększenie tekstu
 
-    cv2.putText(map_copy, 'START', (start_point[0], start_point[1] + text_offset[1]),
-                cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 255, 0), 2)
-    cv2.putText(map_copy, 'END', (end_point[0], end_point[1] + text_offset[1]),
-                cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 255), 2)
+    # cv2.putText(map_copy, 'START', (start_point[0], start_point[1] + text_offset[1]),
+    #             cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 255, 0), 2)
+    # cv2.putText(map_copy, 'END', (end_point[0], end_point[1] + text_offset[1]),
+    #             cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 255), 2)
 
-    cv2.drawMarker(map_copy, start_point, (0, 255, 0), markerType=cv2.MARKER_STAR, markerSize=10, thickness=2)
-    cv2.drawMarker(map_copy, end_point, (0, 0, 255), markerType=cv2.MARKER_STAR, markerSize=10, thickness=2)
-
+    # cv2.drawMarker(map_copy, start_point, (0, 255, 0), markerType=cv2.MARKER_STAR, markerSize=10, thickness=2)
+    # cv2.drawMarker(map_copy, end_point, (0, 0, 255), markerType=cv2.MARKER_STAR, markerSize=10, thickness=2)
     for particle in particles:
         cv2.circle(map_copy, particle.get_position(), 2, (255, 0, 0), 2)
         cv2.circle(map_copy, particle.get_position(), 4, (0, 0, 0), 2)
@@ -78,6 +78,9 @@ def visualize_particles(map_picture, particles, uav, metric):
 
     cv2.imshow('Visual Localization', map_copy)
     cv2.waitKey(1)
+    # key = cv2.waitKey(0) & 0xFF
+    # if key == ord('x'):
+    #     cv2.destroyAllWindows()
 
 
 def compute_matching(particles, uav, matcher, resampler):
