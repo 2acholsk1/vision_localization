@@ -4,7 +4,7 @@ defaults:
 work_env:
   seed: 42
   visualize: True
-  pre_selection: False
+  pre_selection: True
   # picture_path: "data/NAIP/m_3809452_se_15_1_20120624.jpg"
   # picture_path: "data/NAIP/m_3809456_se_15_1_20090719.jpg"
   picture_path: "data/NAIP/m_3608905_nw_16_1_20140728.jpg"

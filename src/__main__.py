@@ -49,38 +49,36 @@ def visualize_particles(map_picture, particles, uav, metric):
 
     # traj_coords = uav.traj_coords
     # for i in range(1, len(traj_coords)):
-    #     cv2.line(map_copy, traj_coords[i - 1], traj_coords[i], (255, 0, 0), 2)
+    #     cv2.line(map_copy, traj_coords[i - 1], traj_coords[i], (255, 0, 0), 5)
 
-    # # Dodanie oznaczenia startu i końca trajektorii
     # start_point = traj_coords[0]
     # end_point = traj_coords[-1]
-    # text_offset = (0, -10)  # Przesunięcie tekstu w górę
-    # font_scale = 1.0  # Powiększenie tekstu
+    # font_scale = 3.0
 
-    # cv2.putText(map_copy, 'START', (start_point[0], start_point[1] + text_offset[1]),
-    #             cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 255, 0), 2)
-    # cv2.putText(map_copy, 'END', (end_point[0], end_point[1] + text_offset[1]),
-    #             cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 255), 2)
+    # cv2.putText(map_copy, 'START', (start_point[0], start_point[1] - 50),
+    #             cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 255, 0), 9)
+    # cv2.putText(map_copy, 'END', (end_point[0] - 120, end_point[1] - 60),
+    #             cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 255), 9)
 
-    # cv2.drawMarker(map_copy, start_point, (0, 255, 0), markerType=cv2.MARKER_STAR, markerSize=10, thickness=2)
-    # cv2.drawMarker(map_copy, end_point, (0, 0, 255), markerType=cv2.MARKER_STAR, markerSize=10, thickness=2)
+    # cv2.drawMarker(map_copy, start_point, (0, 255, 0), markerType=cv2.MARKER_STAR, markerSize=40, thickness=5)
+    # cv2.drawMarker(map_copy, end_point, (0, 0, 255), markerType=cv2.MARKER_STAR, markerSize=40, thickness=5)
     for particle in particles:
-        cv2.circle(map_copy, particle.get_position(), 2, (255, 0, 0), 2)
-        cv2.circle(map_copy, particle.get_position(), 4, (0, 0, 0), 2)
+        cv2.circle(map_copy, particle.get_position(), 5, (255, 0, 0), 5)
+        cv2.circle(map_copy, particle.get_position(), 7, (0, 0, 0), 5)
 
     cv2.ellipse(
         map_copy, (int(centroid[0][0]), int(centroid[0][1])),
         axes=(int(major), int(minor)), angle=0, startAngle=0, endAngle=360,
-        color=(0, 255, 0), thickness=2
+        color=(0, 255, 0), thickness=5
     )
-    cv2.circle(map_copy, (int(centroid[0][0]), int(centroid[0][1])), 5, (0, 0, 255), -1)
-    cv2.circle(map_copy, uav.get_position(), 10, (255, 255, 0), 5)
+    cv2.circle(map_copy, (int(centroid[0][0]), int(centroid[0][1])), 15, (0, 0, 255), -1)
+    cv2.circle(map_copy, uav.get_position(), 20, (255, 255, 0), 12)
 
     cv2.imshow('Visual Localization', map_copy)
     cv2.waitKey(1)
-    # key = cv2.waitKey(0) & 0xFF
-    # if key == ord('x'):
-    #     cv2.destroyAllWindows()
+    key = cv2.waitKey(0) & 0xFF
+    if key == ord('x'):
+        cv2.destroyAllWindows()
 
 
 def compute_matching(particles, uav, matcher, resampler):
