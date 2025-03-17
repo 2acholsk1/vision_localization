@@ -4,11 +4,12 @@ defaults:
 work_env:
   seed: 42
   visualize: True
-  pre_selection: False
+  pre_selection: True
   # picture_path: "data/NAIP/m_3809452_se_15_1_20120624.jpg"
   # picture_path: "data/NAIP/m_3809456_se_15_1_20090719.jpg"
   # picture_path: "data/NAIP/m_3608905_nw_16_1_20140728.jpg"
-  picture_path: "data/NAIP/m_3707807_ne_17_060_20210629.jpg"
+  # picture_path: "data/NAIP/m_3707807_ne_17_060_20210629.jpg"
+  picture_path: "data/NAIP/m_3907736_se_18_1_20170628.jpg"
   patch_size: 128
   start: 0
   scale: 1.0

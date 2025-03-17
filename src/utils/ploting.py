@@ -40,7 +40,7 @@ def plot_csv_files(file1, file2):
     # ax.set_ylabel("Error [m]")
     ax.set_ylabel("Błąd [m]")
     # ax.set_title("Diff between Real Position and Mean of Sum Particles localization")
-    ax.set_title("Różnica pomiędzy Rzeczywistą Pozycja a Średnią Pozycją Cząstek")
+    # ax.set_title("Różnica pomiędzy Rzeczywistą Pozycja a Średnią Pozycją Cząstek")
     ax.set_yscale('log')
     plt.savefig('photos/pic_errors_pl.png', dpi=300)
 

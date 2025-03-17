@@ -110,7 +110,7 @@ def main(cfg: DictConfig):
     time_metric = TimeMetric()
 
     uav = UAV(map_picture, cfg.work_env.patch_size)
-    uav.generate_trajectory(cfg.uav.traj_len)
+    uav.generate_trajectory(cfg.uav.traj_type, cfg.uav.traj_len, cfg.uav.sin_amplitude, cfg.uav.sin_freq)
 
     matcher_starter = choose_matcher(
         cfg.matcher.starter,
