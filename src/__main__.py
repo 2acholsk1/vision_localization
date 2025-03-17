@@ -50,17 +50,17 @@ def visualize_particles(map_picture, particles, uav, metric):
     for i in range(1, len(traj_coords)):
         cv2.line(map_copy, traj_coords[i - 1], traj_coords[i], (255, 0, 0), 5)
 
-    # start_point = traj_coords[0]
-    # end_point = traj_coords[-1]
-    # font_scale = 3.0
+    start_point = traj_coords[0]
+    end_point = traj_coords[-1]
+    font_scale = 3.0
 
-    # cv2.putText(map_copy, 'START', (start_point[0], start_point[1] - 50),
-    #             cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 255, 0), 9)
-    # cv2.putText(map_copy, 'END', (end_point[0] - 120, end_point[1] - 60),
-    #             cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 255), 9)
+    cv2.putText(map_copy, 'START', (start_point[0], start_point[1] - 50),
+                cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 255, 0), 9)
+    cv2.putText(map_copy, 'END', (end_point[0] - 120, end_point[1] - 60),
+                cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 255), 9)
 
-    # cv2.drawMarker(map_copy, start_point, (0, 255, 0), markerType=cv2.MARKER_STAR, markerSize=40, thickness=5)
-    # cv2.drawMarker(map_copy, end_point, (0, 0, 255), markerType=cv2.MARKER_STAR, markerSize=40, thickness=5)
+    cv2.drawMarker(map_copy, start_point, (0, 255, 0), markerType=cv2.MARKER_STAR, markerSize=40, thickness=5)
+    cv2.drawMarker(map_copy, end_point, (0, 0, 255), markerType=cv2.MARKER_STAR, markerSize=40, thickness=5)
     for particle in particles:
         cv2.circle(map_copy, particle.get_position(), 5, (255, 0, 0), 5)
         cv2.circle(map_copy, particle.get_position(), 7, (0, 0, 0), 5)
