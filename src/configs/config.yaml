@@ -7,7 +7,8 @@ work_env:
   pre_selection: False
   # picture_path: "data/NAIP/m_3809452_se_15_1_20120624.jpg"
   # picture_path: "data/NAIP/m_3809456_se_15_1_20090719.jpg"
-  picture_path: "data/NAIP/m_3608905_nw_16_1_20140728.jpg"
+  # picture_path: "data/NAIP/m_3608905_nw_16_1_20140728.jpg"
+  picture_path: "data/NAIP/m_3707807_ne_17_060_20210629.jpg"
   patch_size: 128
   start: 0
   scale: 1.0
@@ -26,7 +27,10 @@ matcher:
   overlap: 0.25
   num_of_best_matches: 25
 uav:
-  traj_len: 300
+  traj_type: 'sinusoidal'
+  sin_amplitude: 550
+  sin_freq: 2
+  traj_len: 900
 
 metrics:
   ploting: True

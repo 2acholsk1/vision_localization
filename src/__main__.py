@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import heapq
-import time
 
 import cv2
 import hydra
@@ -47,9 +46,9 @@ def visualize_particles(map_picture, particles, uav, metric):
     map_copy = np.copy(map_picture)
     major, minor, centroid = metric.get_shape_params(particles)
 
-    # traj_coords = uav.traj_coords
-    # for i in range(1, len(traj_coords)):
-    #     cv2.line(map_copy, traj_coords[i - 1], traj_coords[i], (255, 0, 0), 5)
+    traj_coords = uav.traj_coords
+    for i in range(1, len(traj_coords)):
+        cv2.line(map_copy, traj_coords[i - 1], traj_coords[i], (255, 0, 0), 5)
 
     # start_point = traj_coords[0]
     # end_point = traj_coords[-1]
