@@ -15,7 +15,7 @@ class EuclideanDistance(Metric):
         self.error_steps_y = np.array([])
         self.steps = 0
 
-    def compute(self, particles: list[Particle], uav: UAV):
+    def compute(self, particles: list[Particle], uav: UAV, scale: float):
         error = np.array([0.0, 0.0, 0.0, 0.0])
 
         mean_x = 0.0
@@ -32,8 +32,8 @@ class EuclideanDistance(Metric):
         error[2] = abs(uav.get_position()[0] - mean_x)
         error[3] = abs(uav.get_position()[1] - mean_y)
 
-        self.error_steps_x = np.append(self.error_steps_x, error[2])
-        self.error_steps_y = np.append(self.error_steps_y, error[3])
+        self.error_steps_x = np.append(self.error_steps_x, error[2] * scale)
+        self.error_steps_y = np.append(self.error_steps_y, error[3] * scale)
 
         self.total_absolute_error[0] += error[0]
         self.total_absolute_error[1] += error[1]
@@ -42,23 +42,29 @@ class EuclideanDistance(Metric):
 
         self.steps += 1
 
-    def evaluate(self, ploting):
+    def evaluate(self, ploting: bool):
         log.info(
             "MEAN EUCLIDEAN DISTANCE\n"
-            "Total Absolute Error (TAE): x=%s; y=%s\n"
-            "Mean Absolute Error (MAE): x=%s; y=%s\n",
+            "Sumed Total Absolute Error (STAE): x=%s; y=%s [m]\n"
+            "Sumed Mean Absolute Error (SMAE): x=%s; y=%s [m]\n"
+            "Mean Absolute Error (MAE): x=%s; y=%s [m]\n",
             self.total_absolute_error[0], self.total_absolute_error[1],
-            self.mean_absolute_error[0], self.mean_absolute_error[1]
+            self.mean_absolute_error[0], self.mean_absolute_error[1],
+            self.mean_absolute_error[0] / self.steps,
+            self.mean_absolute_error[1] / self.steps
         )
+
         if ploting:
             fig, ax = plt.subplots()
             t = np.arange(0, self.steps, 1)
-            ax.plot(t, self.error_steps_x, label="X_error")
-            ax.plot(t, self.error_steps_y, label="Y_error")
+            ax.plot(t, self.error_steps_x, label="X error")
+            ax.plot(t, self.error_steps_y, label="Y error")
+            ax.plot(t, np.sqrt(self.error_steps_x**2 + self.error_steps_y**2), label="Euclidean distance error")
             ax.legend()
             ax.set_xlabel("Step")
-            ax.set_ylabel("Error [px]")
+            ax.set_ylabel("Error [m]")
             ax.set_title("Diff between Real Position and Mean Particles Value")
+            ax.set_yscale('log')
             ax.grid()
             return fig
         return None

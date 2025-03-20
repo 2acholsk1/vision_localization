@@ -32,26 +32,49 @@ class UAV:
             self.end_point
             )
 
-    def generate_trajectory(self, sequence_length):
+
+    def generate_trajectory(self, traj_type: str, sequence_length: int, amplitude_conf: int=250, freq_conf: int=3):
         self.sequence_length = sequence_length
-        coord_heights = np.linspace(
-            self.start_point,
-            self.end_point,
-            self.sequence_length,
-            )
-        coord_widths = np.linspace(
-            0 + int(self.patch_size / 2) + 1,
-            self.width - int(self.patch_size / 2) - 1,
-            sequence_length,
-            )
+
+        match traj_type:
+            case 'simple':
+                coord_heights = np.linspace(
+                self.start_point,
+                self.end_point,
+                self.sequence_length,
+                )
+                coord_widths = np.linspace(
+                    0 + int(self.patch_size / 2) + 1,
+                    self.width - int(self.patch_size / 2) - 1,
+                    sequence_length,
+                    )
+            case 'sinusoidal':
+                amplitude = amplitude_conf
+                frequency = freq_conf
+                offset = self.start_point
+
+                coord_widths = np.linspace(
+                    0 + int(self.patch_size / 2) + 1,
+                    self.width - int(self.patch_size / 2) - 1,
+                    self.sequence_length,
+                )
+
+                x_vals = np.linspace(0, 2 * np.pi * frequency, self.sequence_length)
+                coord_heights = amplitude * np.sin(x_vals) + offset
+            case _:
+                coord_heights = []
+                coord_widths = []
+
+        self.traj_coords = []
 
         for i in range(self.sequence_length):
             self.traj_coords.append(
-                    (
-                        int(coord_widths[i]),
-                        int(coord_heights[i])
-                    )
+                (
+                    int(coord_widths[i]),
+                    int(coord_heights[i])
                 )
+            )
+
         self.localization = self.traj_coords[0]
 
     def set_patch(self):
