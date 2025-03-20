@@ -45,8 +45,8 @@ class EuclideanDistance(Metric):
     def evaluate(self, ploting: bool):
         log.info(
             "MEAN EUCLIDEAN DISTANCE\n"
-            "Sumed Total Absolute Error (STAE): x=%s; y=%s [px]\n"
-            "Sumed Mean Absolute Error (SMAE): x=%s; y=%s [px]\n"
+            "Sumed Total Absolute Error (STAE): x=%s; y=%s [m]\n"
+            "Sumed Mean Absolute Error (SMAE): x=%s; y=%s [m]\n"
             "Mean Absolute Error (MAE): x=%s; y=%s [m]\n",
             self.total_absolute_error[0], self.total_absolute_error[1],
             self.mean_absolute_error[0], self.mean_absolute_error[1],

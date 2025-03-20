@@ -52,12 +52,12 @@ def visualize_particles(map_picture, particles, uav, metric):
 
     start_point = traj_coords[0]
     end_point = traj_coords[-1]
-    font_scale = 3.0
 
-    cv2.putText(map_copy, 'START', (start_point[0], start_point[1] - 50),
-                cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 255, 0), 9)
-    cv2.putText(map_copy, 'END', (end_point[0] - 120, end_point[1] - 60),
-                cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 255), 9)
+    # font_scale = 3.0
+    # cv2.putText(map_copy, 'START', (start_point[0], start_point[1] - 50),
+    #             cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 255, 0), 9)
+    # cv2.putText(map_copy, 'END', (end_point[0] - 120, end_point[1] - 60),
+    #             cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 255), 9)
 
     cv2.drawMarker(map_copy, start_point, (0, 255, 0), markerType=cv2.MARKER_STAR, markerSize=40, thickness=5)
     cv2.drawMarker(map_copy, end_point, (0, 0, 255), markerType=cv2.MARKER_STAR, markerSize=40, thickness=5)
@@ -75,9 +75,9 @@ def visualize_particles(map_picture, particles, uav, metric):
 
     cv2.imshow('Visual Localization', map_copy)
     cv2.waitKey(1)
-    key = cv2.waitKey(0) & 0xFF
-    if key == ord('x'):
-        cv2.destroyAllWindows()
+    # key = cv2.waitKey(0) & 0xFF
+    # if key == ord('x'):
+    #     cv2.destroyAllWindows()
 
 
 def compute_matching(particles, uav, matcher, resampler):
@@ -112,12 +112,6 @@ def main(cfg: DictConfig):
     uav = UAV(map_picture, cfg.work_env.patch_size)
     uav.generate_trajectory(cfg.uav.traj_type, cfg.uav.traj_len, cfg.uav.sin_amplitude, cfg.uav.sin_freq)
 
-    matcher_starter = choose_matcher(
-        cfg.matcher.starter,
-        cfg.model.encoder_name,
-        cfg.model.embedding_size,
-        cfg.model.weights_path
-    )
     matcher_cont = choose_matcher(
         cfg.matcher.continous,
         cfg.model.encoder_name,
@@ -127,17 +121,23 @@ def main(cfg: DictConfig):
     resampler = choose_resampler(cfg.resampler.name, cfg.particles.number)
 
     uav.set_patch()
-    best_patches = find_top_matches(
-        map_picture,
-        cfg.matcher.patch_size,
-        cfg.matcher.overlap,
-        uav.get_patch(),
-        matcher_starter,
-        cfg.matcher.num_of_best_matches
-    )
 
     particles = []
     if cfg.work_env.pre_selection:
+        matcher_starter = choose_matcher(
+            cfg.matcher.starter,
+            cfg.model.encoder_name,
+            cfg.model.embedding_size,
+            cfg.model.weights_path
+        )
+        best_patches = find_top_matches(
+            map_picture,
+            cfg.matcher.patch_size,
+            cfg.matcher.overlap,
+            uav.get_patch(),
+            matcher_starter,
+            cfg.matcher.num_of_best_matches
+        )
         particles_per_patch = cfg.particles.number // len(best_patches)
         for _, patch, (x, y) in best_patches:
             patch_h, patch_w, _ = patch.shape
@@ -149,7 +149,6 @@ def main(cfg: DictConfig):
         particles = np.array(particles)
     else:
         particles = np.array([Particle(map_picture, cfg.work_env.patch_size) for _ in range(cfg.particles.number)])
-
 
     if cfg.work_env.visualize:
         cv2.namedWindow("Visual Localization", cv2.WINDOW_NORMAL)

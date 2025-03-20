@@ -9,6 +9,9 @@ setup(
     author="2acholsk1",
     license="",
     packages=setuptools.find_packages(),
+    package_data={
+        'src.configs': ['*.yaml'],
+    },
     entry_points={
         'console_scripts': [
             'VL = src.__main__:main'
