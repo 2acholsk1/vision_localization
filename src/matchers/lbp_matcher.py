@@ -16,7 +16,6 @@ class MatcherLBP:
         # Normalization between [0..1]
         result = (result + 1.0) / 2.0
         self.sum_of_weight.append(result)
-
         return result
 
     def compute_template(self, patch):
@@ -37,11 +36,10 @@ class MatcherLBP:
         hist_g /= hist_g.sum()
         hist_r /= hist_r.sum()
 
-        lbp = local_binary_pattern(cv2.cvtColor(patch, cv2.COLOR_BGR2GRAY), 8, 1, method='nri_uniform')
+        lbp = local_binary_pattern(cv2.cvtColor(patch, cv2.COLOR_BGR2GRAY), 8, 1, method='default')
         hist_lbp = cv2.calcHist([lbp.astype(np.uint8)], [0], None, [32], [0, 31])
         hist_lbp /= hist_lbp.sum()
 
         vector = np.vstack((hist_b, hist_g, hist_r, hist_lbp))
         vector /= np.sum(vector)
-
         return vector

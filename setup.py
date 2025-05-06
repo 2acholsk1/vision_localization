@@ -14,7 +14,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'VL = src.__main__:main'
+            'VL = src.__main__:main',
+            'VL_PT = src.main_pt:main'
         ],
     },
     python_requires='>=3.10',

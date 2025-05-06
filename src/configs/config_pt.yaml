@@ -1,0 +1,7 @@
+defaults:
+  - _self_
+
+map_path: "data/NAIP/m_3608905_nw_16_1_20140728.jpg"
+patch_size: 63
+traj_len: 300
+particles_num: 100
