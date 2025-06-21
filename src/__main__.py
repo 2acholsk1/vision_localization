@@ -48,7 +48,7 @@ def visualize_particles(map_picture, particles, uav, metric):
 
     traj_coords = uav.traj_coords
     for i in range(1, len(traj_coords)):
-        cv2.line(map_copy, traj_coords[i - 1], traj_coords[i], (255, 0, 0), 5)
+        cv2.line(map_copy, traj_coords[i - 1], traj_coords[i], (0, 0, 255), 5)
 
     start_point = traj_coords[0]
     end_point = traj_coords[-1]
@@ -60,9 +60,9 @@ def visualize_particles(map_picture, particles, uav, metric):
     #             cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 255), 9)
 
     cv2.drawMarker(map_copy, start_point, (0, 255, 0), markerType=cv2.MARKER_STAR, markerSize=40, thickness=5)
-    cv2.drawMarker(map_copy, end_point, (0, 0, 255), markerType=cv2.MARKER_STAR, markerSize=40, thickness=5)
+    cv2.drawMarker(map_copy, end_point, (0, 255, 255), markerType=cv2.MARKER_STAR, markerSize=40, thickness=5)
     for particle in particles:
-        cv2.circle(map_copy, particle.get_position(), 5, (255, 0, 0), 5)
+        cv2.circle(map_copy, particle.get_position(), 5, (0, 0, 255), 5)
         cv2.circle(map_copy, particle.get_position(), 7, (0, 0, 0), 5)
 
     cv2.ellipse(
@@ -70,7 +70,7 @@ def visualize_particles(map_picture, particles, uav, metric):
         axes=(int(major), int(minor)), angle=0, startAngle=0, endAngle=360,
         color=(0, 255, 0), thickness=5
     )
-    cv2.circle(map_copy, (int(centroid[0][0]), int(centroid[0][1])), 15, (0, 0, 255), -1)
+    cv2.circle(map_copy, (int(centroid[0][0]), int(centroid[0][1])), 15, (255, 0, 0), -1)
     cv2.circle(map_copy, uav.get_position(), 20, (255, 255, 0), 12)
 
     cv2.imshow('Visual Localization', map_copy)

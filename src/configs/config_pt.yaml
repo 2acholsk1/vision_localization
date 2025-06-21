@@ -1,7 +1,18 @@
 defaults:
   - _self_
 
-map_path: "data/NAIP/m_3608905_nw_16_1_20140728.jpg"
+map_path: "data/NAIP/m_3907736_se_18_1_20170628.jpg"
+particles_num: 100
 patch_size: 63
 traj_len: 300
-particles_num: 100
+
+pre_selection: True
+matcher: "NN"
+encoder_name: "resnet50"
+embedding_size: 128
+weights_path: "data/models/model_365.pth"
+overlap: 0.25
+num_of_best_matches: 25
+
+speed_mps: 15.0
+dt_sim: 0.1

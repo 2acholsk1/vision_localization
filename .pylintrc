@@ -22,3 +22,6 @@ disable=
 
 [FORMAT]
 max-line-length=120
+
+[MASTER]
+ignore=main_pt.py,src/utils/

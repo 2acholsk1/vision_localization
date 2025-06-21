@@ -31,7 +31,9 @@ RUN apt-get install -y --no-install-recommends \
     libswscale-dev \
     libv4l-dev \
     libxvidcore-dev \
-    libx264-dev
+    libx264-dev \
+    libgl1 \
+    libqt5widgets5
 
 RUN rm -rf /var/lib/apt/lists/*
 
