@@ -1,4 +1,5 @@
 from src.matchers.lbp_matcher import MatcherLBP
+from src.matchers.lbp_pt_matcher import MatcherPyTorchLBP
 from src.matchers.nn_matcher import NNMatcher
 from src.resamplers.bootstrap_resampler import BootstrapResampler
 from src.resamplers.deterministic_resampler import DeterministicResampler
@@ -14,6 +15,8 @@ def choose_matcher(matcher_name, encoder_name, embedding_size, weights_path):
     match(matcher_name):
         case 'LBP':
             return MatcherLBP()
+        case 'LBP_PT':
+            return MatcherPyTorchLBP()
         case 'NN':
             return NNMatcher(encoder_name, embedding_size, weights_path)
 

@@ -1,6 +1,7 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+
 
 # def plot_csv_files(file1, file2, file3, file4, file5, file6):
 def plot_csv_files(file1, file2):
@@ -25,28 +26,29 @@ def plot_csv_files(file1, file2):
 
     # Tworzenie wykresu
     _, ax = plt.subplots()
-    plt.plot(x_values, y_values1, color='g', linestyle='-', label='Błąd - z preselekcją')
-    # plt.plot(x_values, y_values1, color='g', linestyle='-', label='Pic. 1 Error with preselection')
-    plt.plot(x_values, y_values2, color='r', linestyle='-', label='Błąd - bez preselekcji')
-    # plt.plot(x_values, y_values2, color='g', linestyle=':', label='Pic. 1 Error without preselection')
+    # plt.plot(x_values, y_values1, color='g', linestyle='-', label='Błąd - z preselekcją')
+    plt.plot(x_values, y_values1, color='g', linestyle='-', label='Pic. 1 Error with preselection')
+    # plt.plot(x_values, y_values2, color='r', linestyle='-', label='Błąd - bez preselekcji')
+    plt.plot(x_values, y_values2, color='r', linestyle='-', label='Pic. 1 Error without preselection')
     # plt.plot(x_values, y_values3, color='b', linestyle='-', label='Pic. 2 Error with preselection')
     # plt.plot(x_values, y_values4, color='b', linestyle=':', label='Pic. 2 Error without preselection')
     # plt.plot(x_values, y_values5, color='r', linestyle='-',label='Pic. 3 Error with preselection')
     # plt.plot(x_values, y_values6, color='r', linestyle=':',label='Pic. 3 Error without preselection')
     plt.grid(True)
     plt.legend()
-    # ax.set_xlabel("Step")
-    ax.set_xlabel("Krok")
-    # ax.set_ylabel("Error [m]")
-    ax.set_ylabel("Błąd [m]")
+    ax.set_xlabel("Step")
+    # ax.set_xlabel("Krok")
+    ax.set_ylabel("Error [m]")
+    # ax.set_ylabel("Błąd [m]")
     # ax.set_title("Diff between Real Position and Mean of Sum Particles localization")
     # ax.set_title("Różnica pomiędzy Rzeczywistą Pozycja a Średnią Pozycją Cząstek")
     ax.set_yscale('log')
-    plt.savefig('photos/pic_errors_pl.png', dpi=300)
+    plt.savefig('photos/pic_errors_eng.png', dpi=300)
+
 
 plot_csv_files(
-    'outputs/2025-03-17/10-03-21/results/error_steps.csv',
-    'outputs/2025-03-17/12-00-50/results/error_steps.csv'
+    'outputs/2025-03-20/11-03-14/results/error_steps.csv',
+    'outputs/2025-03-27/11-08-26/results/error_steps.csv'
     # 'outputs/2025-02-14/12-28-35/results/error_steps.csv',
     # 'outputs/2025-02-14/12-30-35/results/error_steps.csv',
     # 'outputs/2025-02-14/12-32-30/results/error_steps.csv',

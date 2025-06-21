@@ -18,6 +18,10 @@ disable=
     E1120,  # no-value-for-parameter
     R0911, # Too mant return statements
     W0221, # Argument in compute of metric different fo methods
+    R0801, # Similar lines
 
 [FORMAT]
 max-line-length=120
+
+[MASTER]
+ignore=main_pt.py,src/utils/

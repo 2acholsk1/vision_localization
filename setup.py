@@ -4,7 +4,7 @@ import setuptools
 from setuptools import setup
 
 setup(
-    name="VL - Visual Localization",
+    name="VL_Visual_Localization",
     version="0.0.1",
     author="2acholsk1",
     license="",
@@ -14,7 +14,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'VL = src.__main__:main'
+            'VL = src.__main__:main',
+            'VL_PT = src.main_pt:main'
         ],
     },
     python_requires='>=3.10',
