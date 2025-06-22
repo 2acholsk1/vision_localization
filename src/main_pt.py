@@ -13,53 +13,6 @@ from scipy.interpolate import CubicSpline
 from src.metrics.pt_metric import MetricLogger, save_results
 from src.utils.launching_utils import choose_matcher
 
-
-class KalmanFilter2D:
-    def __init__(self, device):
-        self.device = device
-        self.state = None
-        self.P = None
-        self.dt = 1.0
-
-        self.F = torch.tensor([
-            [1, 0, self.dt, 0],
-            [0, 1, 0, self.dt],
-            [0, 0, 1,     0],
-            [0, 0, 0,     1]
-        ], device=device).float()
-
-        self.H = torch.tensor([
-            [1, 0, 0, 0],
-            [0, 1, 0, 0]
-        ], device=device).float()
-
-        self.Q = torch.eye(4, device=device).float() * 1e-2
-        self.R = torch.eye(2, device=device).float() * 1.0
-        self.I = torch.eye(4, device=device).float()
-
-    def initialize(self, measurement):
-        self.state = torch.cat([measurement, torch.zeros(2, device=self.device)]).float()
-        self.P = torch.eye(4, device=self.device).float() * 10.0
-
-    def update(self, measurement):
-        if self.state is None:
-            self.initialize(measurement)
-
-        self.state = self.F @ self.state
-        self.P = self.F @ self.P @ self.F.t() + self.Q
-
-        z = measurement.float()
-        y = z - self.H @ self.state
-        S = self.H @ self.P @ self.H.t() + self.R
-        K = self.P @ self.H.t() @ torch.linalg.inv(S)
-
-        self.state = self.state + K @ y
-        self.P = (self.I - K @ self.H) @ self.P
-
-        return self.state[:2]
-
-
-
 def find_top_matches(map_picture, patch_size, overlap, uav_patch, matcher, top_k=5):
     img_h, img_w, _ = map_picture.shape
     step_size = int(patch_size * (1 - overlap))
@@ -223,9 +176,6 @@ def generate_uav_trajectory(patch_size, map_height, map_width, step_size_px, tra
     return coords
 
 
-
-
-
 def initialize_particles(num_particles, patch_size, H, W, device):
     ys = torch.randint(patch_size//2, H - patch_size//2, (num_particles,), device=device)
     xs = torch.randint(patch_size//2, W - patch_size//2, (num_particles,), device=device)
@@ -258,13 +208,12 @@ def match_patches_batch(descriptors, template):
     return scores
 
 
-def move_particles(particles, move_model, patch_size, map_height, map_width):
+def move_particles(particles, move_model, patch_size, map_height, map_width, base_noise, noise_scale_den):
     var_x = particles[:, 0].float().var()
     var_y = particles[:, 1].float().var()
     mean_var = (var_x + var_y) / 2.0
-
-    base_noise = 5.0
-    noise_scale = torch.clamp(mean_var / 5000.0, 0.1, 3.0)
+    
+    noise_scale = torch.clamp(mean_var / noise_scale_den, 0.01, 3.0)
     noise_amount = base_noise * noise_scale
 
     noise = (torch.randn_like(particles, dtype=torch.float32) * noise_amount).round().to(torch.int32)
@@ -286,7 +235,6 @@ def systematic_resample(weights, device):
 
 @hydra.main(config_path='configs', config_name='config_pt.yaml', version_base=None)
 def main(cfg: DictConfig):
-    total_time = 0.0
     step_count = 0
 
     map_path = cfg.map_path
@@ -308,7 +256,7 @@ def main(cfg: DictConfig):
     step_size_px = speed_mps * dt_sim / meters_per_pixel
 
 
-    trajectory = generate_uav_trajectory(patch_size, map_height, map_width, step_size_px, trajectory_type='spline')
+    trajectory = generate_uav_trajectory(patch_size, map_height, map_width, step_size_px, trajectory_type=cfg.trajectory_type)
     traj_len = len(trajectory)
 
     particles = []
@@ -345,12 +293,11 @@ def main(cfg: DictConfig):
 
     uav_loc = 0
     move_model = torch.zeros(2, device=device, dtype=torch.int32)
-    kf = KalmanFilter2D(device)
     metric_logger = MetricLogger()
 
-
-    cv2.namedWindow("Tracking", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("Tracking", 800, 600)
+    if cfg.visualize:
+        cv2.namedWindow("Tracking", cv2.WINDOW_NORMAL)
+        cv2.resizeWindow("Tracking", 800, 600)
     with torch.no_grad():
         while uav_loc < traj_len - 1:
             real_time_start = time.time()
@@ -358,59 +305,71 @@ def main(cfg: DictConfig):
 
             while not step_finished:
                 current_time = time.time()
+                start_time = time.perf_counter()
                 elapsed = current_time - real_time_start
 
                 if elapsed >= cfg.dt_sim:
                     step_finished = True
                     break
 
-                # === Aktualna pozycja UAV ===
                 point = trajectory[uav_loc]
 
-                # === Patch template i particle patches ===
                 template_patch = get_patches(torch.tensor([point], device=device), map_tensor, patch_size)[0]
                 particle_patches = get_patches(particles, map_tensor, patch_size)
 
-                # === Dopasowanie ===
                 scores = match_patches_batch(particle_patches, template_patch)
                 scores = scores + 1e-6
                 scores = scores / scores.sum()
 
-                # === Resampling & ruch ===
                 indices = systematic_resample(scores, device)
                 move_model = torch.tensor(trajectory[uav_loc+1], device=device) - torch.tensor(trajectory[uav_loc], device=device)
-                particles = move_particles(particles[indices], move_model, patch_size, map_height, map_width)
+                particles = move_particles(particles[indices], move_model, patch_size, map_height, map_width, cfg.base_noise, cfg.noise_scale_den)
 
-                # === Estymacja pozycji ===
                 estimated_raw = estimate_position(particles, scores).float().to(device)
-                estimated_pos = kf.update(estimated_raw)
+                step_time = time.perf_counter() - start_time
 
-                # === Błąd lokalizacji ===
                 ground_truth_pos = torch.tensor(point, device=device)
-                error = compute_position_error(estimated_pos, ground_truth_pos)
-                metric_logger.log(error, ground_truth_pos, estimated_pos)
+                error = compute_position_error(estimated_raw, ground_truth_pos)
+                var_x = particles[:, 0].float().var().item()
+                var_y = particles[:, 1].float().var().item()
+                mean_var = (var_x + var_y) / 2.0
+                converged = mean_var < cfg.convergence_threshold_var
+                max_score = scores.max().item()
+                entropy = -torch.sum(scores * torch.log(scores + 1e-8)).item()
 
+                metric_logger.log(
+                    error, ground_truth_pos, estimated_raw,
+                    var_x, var_y, max_score, entropy, step_time, converged
+                )
 
-                print(f"real      : {ground_truth_pos}")
-                print(f"estimated : {estimated_pos}")
-                print(f"error     : {error:.2f} px")
+                if cfg.visualize:
+                    map_canvas = map_cv.copy()
+                    for i in range(1, len(trajectory)):
+                        cv2.line(map_canvas, trajectory[i - 1], trajectory[i], (0, 0, 255), 10)
+                    cv2.drawMarker(map_canvas, trajectory[0], (0, 255, 0), markerType=cv2.MARKER_STAR, markerSize=40, thickness=5)
+                    cv2.drawMarker(map_canvas, trajectory[-1], (0, 255, 255), markerType=cv2.MARKER_STAR, markerSize=40, thickness=5)
+                    for p in particles.cpu().numpy():
+                        cv2.circle(map_canvas, (p[0], p[1]), 12, (0, 0, 0), 6)
+                        cv2.circle(map_canvas, (p[0], p[1]), 8, (0, 0, 255), 4)
+                    cv2.circle(map_canvas, (point[0], point[1]), 20, (255, 255, 0), 10)
+                    cv2.circle(map_canvas, tuple(estimated_raw.int().tolist()), 20, (0, 255, 0), 3)
 
-                # === Wizualizacja ===
-                map_canvas = map_cv.copy()
-                for i in range(1, len(trajectory)):
-                    cv2.line(map_canvas, trajectory[i - 1], trajectory[i], (0, 0, 255), 10)
-                cv2.drawMarker(map_canvas, trajectory[0], (0, 255, 0), markerType=cv2.MARKER_STAR, markerSize=40, thickness=5)
-                cv2.drawMarker(map_canvas, trajectory[-1], (0, 255, 255), markerType=cv2.MARKER_STAR, markerSize=40, thickness=5)
-                for p in particles.cpu().numpy():
-                    cv2.circle(map_canvas, (p[0], p[1]), 12, (0, 0, 0), 6)
-                    cv2.circle(map_canvas, (p[0], p[1]), 8, (0, 0, 255), 4)
-                cv2.circle(map_canvas, (point[0], point[1]), 20, (255, 255, 0), 10)
-                cv2.circle(map_canvas, tuple(estimated_pos.int().tolist()), 20, (0, 255, 0), 3)
+                    cv2.imshow('Tracking', map_canvas)
+                    if cv2.waitKey(1) & 0xFF == ord('q'):
+                        return
 
-                cv2.imshow('Tracking', map_canvas)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    return
+            if converged and error < cfg.error_threshold_px:
+                convergence_counter += 1
+            elif converged and error > cfg.error_threshold_px*2:
+                convergence_in_wrong_place += 1
+            else:
+                convergence_counter = 0
+                convergence_in_wrong_place = 0
 
+            if convergence_counter >= cfg.required_converged_steps:
+                break
+            if convergence_in_wrong_place >= cfg.conv_wrong_place:
+                break
             uav_loc += 1
             step_count += 1
 
@@ -425,6 +384,7 @@ def main(cfg: DictConfig):
     ax.grid(True)
 
     save_results(metric_logger, fig)
+    print("DONE")
 
 
 if __name__ == "main_pt":
