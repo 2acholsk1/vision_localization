@@ -1,10 +1,12 @@
 defaults:
   - _self_
 
-map_path: "data/NAIP/m_3608905_nw_16_1_20140728.jpg"
-particles_num: 196
-patch_size: 49
+map_path: "data/20250523_EPG_4km2500m_GSD_10cm-orthomosaic.tiff"
+particles_num: 200
+patch_size: 64
 traj_len: 100
+traj_csv: "data/EPG_photos_gps_pixels.csv"
+traj_patch_dir: "data/patches_from_trajectory"
 trajectory_type: 'sine'
 visualize: True
 noise_scale_den: 5000

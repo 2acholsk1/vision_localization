@@ -20,3 +20,9 @@ lib64/
 .log
 outputs/
 multirun/
+
+data/20250523_EPG_4km2500m_GSD_10cm-orthomosaic.tiff
+data/EPG_photos
+data/EPG_photos_resized512
+data/EPG_photos_resized_proper
+data/patches_from_trajectory

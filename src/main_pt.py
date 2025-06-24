@@ -294,11 +294,16 @@ def main(cfg: DictConfig):
     uav_loc = 0
     move_model = torch.zeros(2, device=device, dtype=torch.int32)
     metric_logger = MetricLogger()
+    correct_convergences = 0
+    false_convergences = 0
+    total_runs = 0
+
 
     if cfg.visualize:
         cv2.namedWindow("Tracking", cv2.WINDOW_NORMAL)
         cv2.resizeWindow("Tracking", 800, 600)
     with torch.no_grad():
+        print("STARTING")
         while uav_loc < traj_len - 1:
             real_time_start = time.time()
             step_finished = False
@@ -336,7 +341,6 @@ def main(cfg: DictConfig):
                 converged = mean_var < cfg.convergence_threshold_var
                 max_score = scores.max().item()
                 entropy = -torch.sum(scores * torch.log(scores + 1e-8)).item()
-
                 metric_logger.log(
                     error, ground_truth_pos, estimated_raw,
                     var_x, var_y, max_score, entropy, step_time, converged
@@ -360,8 +364,10 @@ def main(cfg: DictConfig):
 
             if converged and error < cfg.error_threshold_px:
                 convergence_counter += 1
-            elif converged and error > cfg.error_threshold_px*2:
+                correct_convergences += 1
+            elif converged and error > cfg.error_threshold_px * 2:
                 convergence_in_wrong_place += 1
+                false_convergences += 1
             else:
                 convergence_counter = 0
                 convergence_in_wrong_place = 0
@@ -372,9 +378,18 @@ def main(cfg: DictConfig):
                 break
             uav_loc += 1
             step_count += 1
+            total_runs += 1
+
 
     avg_error = sum(metric_logger.errors) / len(metric_logger.errors)
-    print(f"\nAverage localization error: {avg_error:.2f} px")
+    avg_time = sum(metric_logger.step_times) / len(metric_logger.step_times)
+
+    s = correct_convergences / total_runs if total_runs > 0 else 0.0
+    f = false_convergences / total_runs if total_runs > 0 else 0.0
+
+    print(f"METRIC_RESULTS: avg_error={avg_error:.4f}, avg_time={avg_time:.4f}, "
+        f"correct_convergence={s:.4f}, false_convergence={f:.4f}")
+
 
     fig, ax = plt.subplots()
     ax.plot(metric_logger.errors)
@@ -384,7 +399,6 @@ def main(cfg: DictConfig):
     ax.grid(True)
 
     save_results(metric_logger, fig)
-    print("DONE")
 
 
 if __name__ == "main_pt":
