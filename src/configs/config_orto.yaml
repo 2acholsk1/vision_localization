@@ -2,18 +2,20 @@ defaults:
   - _self_
 
 map_path: "data/20250523_EPG_4km2500m_GSD_10cm-orthomosaic.tiff"
-particles_num: 200
-patch_size: 64
+trajectory_csv_path: "data/interpolowana_trajektoria.csv"
+
+particles_num: 114
+patch_size: 50
 traj_len: 100
-traj_csv: "data/EPG_photos_gps_pixels.csv"
-traj_patch_dir: "data/patches_from_trajectory"
 trajectory_type: 'sine'
 visualize: True
-noise_scale_den: 5000
+noise_scale_den: 10000
 convergence_threshold_var: 100.0
 error_threshold_px: 10.0
-required_converged_steps: 50
-conv_wrong_place: 50
+required_converged_steps: 999999999
+conv_wrong_place: 9999999999
+show_uav_patch: True
+downscale_factor: 8
 
 pre_selection: True
 matcher: "NN"
@@ -21,9 +23,9 @@ encoder_name: "resnet50"
 embedding_size: 128
 weights_path: "data/models/model_365.pth"
 overlap: 0.25
-num_of_best_matches: 25
+num_of_best_matches: 100
 
-base_noise: 2.68
+base_noise: 1.48
 
 speed_mps: 5.0
 dt_sim: 0.1

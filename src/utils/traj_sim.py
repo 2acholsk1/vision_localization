@@ -100,7 +100,7 @@ for i, ttype in enumerate(types):
 
     end_pt = tuple(coords[-1])
     cv2.drawMarker(img_copy, end_pt, (255, 255, 0), markerType=cv2.MARKER_STAR, markerSize=80, thickness=9)
-    cv2.putText(img_copy, "END", (end_pt[0] + 50, end_pt[1] - 50),
+    cv2.putText(img_copy, "END", (end_pt[0] - 200, end_pt[1] - 50),
                 cv2.FONT_HERSHEY_SIMPLEX, 3.0, (255, 255, 0), 10)
 
     axs[i].imshow(img_copy)

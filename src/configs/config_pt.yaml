@@ -1,8 +1,8 @@
 defaults:
   - _self_
 
-map_path: "data/NAIP/m_3608905_nw_16_1_20140728.jpg"
-particles_num: 196
+map_path: "data/test_naip/198828/m_3907650_nw_18_1_20170716.jpg"
+particles_num: 116
 patch_size: 49
 traj_len: 100
 trajectory_type: 'sine'
@@ -10,8 +10,8 @@ visualize: True
 noise_scale_den: 5000
 convergence_threshold_var: 100.0
 error_threshold_px: 10.0
-required_converged_steps: 50
-conv_wrong_place: 50
+required_converged_steps: 999999999
+conv_wrong_place: 99999999
 
 pre_selection: True
 matcher: "NN"
@@ -21,7 +21,7 @@ weights_path: "data/models/model_365.pth"
 overlap: 0.25
 num_of_best_matches: 25
 
-base_noise: 2.68
+base_noise: 1.28
 
 speed_mps: 5.0
 dt_sim: 0.1

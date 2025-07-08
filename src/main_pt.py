@@ -13,6 +13,7 @@ from scipy.interpolate import CubicSpline
 from src.metrics.pt_metric import MetricLogger, save_results
 from src.utils.launching_utils import choose_matcher
 
+
 def find_top_matches(map_picture, patch_size, overlap, uav_patch, matcher, top_k=5):
     img_h, img_w, _ = map_picture.shape
     step_size = int(patch_size * (1 - overlap))
@@ -208,16 +209,19 @@ def match_patches_batch(descriptors, template):
     return scores
 
 
-def move_particles(particles, move_model, patch_size, map_height, map_width, base_noise, noise_scale_den):
+def move_particles(particles, move_model, patch_size, map_height, map_width, base_noise, noise_scale_den, next):
     var_x = particles[:, 0].float().var()
     var_y = particles[:, 1].float().var()
     mean_var = (var_x + var_y) / 2.0
-    
+
     noise_scale = torch.clamp(mean_var / noise_scale_den, 0.01, 3.0)
     noise_amount = base_noise * noise_scale
 
     noise = (torch.randn_like(particles, dtype=torch.float32) * noise_amount).round().to(torch.int32)
-    particles = particles + noise + move_model
+    if next:
+        particles = particles + noise + move_model
+    else:
+        particles = particles + noise
 
     particles[:, 0] = torch.clamp(particles[:, 0], patch_size//2, map_width - patch_size//2)
     particles[:, 1] = torch.clamp(particles[:, 1], patch_size//2, map_height - patch_size//2)
@@ -297,6 +301,7 @@ def main(cfg: DictConfig):
     correct_convergences = 0
     false_convergences = 0
     total_runs = 0
+    next_loc = True
 
 
     if cfg.visualize:
@@ -328,10 +333,11 @@ def main(cfg: DictConfig):
 
                 indices = systematic_resample(scores, device)
                 move_model = torch.tensor(trajectory[uav_loc+1], device=device) - torch.tensor(trajectory[uav_loc], device=device)
-                particles = move_particles(particles[indices], move_model, patch_size, map_height, map_width, cfg.base_noise, cfg.noise_scale_den)
+                particles = move_particles(particles[indices], move_model, patch_size, map_height, map_width, cfg.base_noise, cfg.noise_scale_den, next_loc)
 
                 estimated_raw = estimate_position(particles, scores).float().to(device)
                 step_time = time.perf_counter() - start_time
+                next_loc = False
 
                 ground_truth_pos = torch.tensor(point, device=device)
                 error = compute_position_error(estimated_raw, ground_truth_pos)
@@ -379,6 +385,7 @@ def main(cfg: DictConfig):
             uav_loc += 1
             step_count += 1
             total_runs += 1
+            next_loc = True
 
 
     avg_error = sum(metric_logger.errors) / len(metric_logger.errors)
